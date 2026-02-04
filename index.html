@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v7</title>
+    <title>HK Report Card Generator v8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     <!-- Favicon SVG -->
@@ -127,7 +127,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v7</span></h1>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v8</span></h1>
                 </div>
             </div>
             <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
@@ -281,9 +281,9 @@
                 category: 'high',
                 icon: '🌟',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} student with {adj2} potential.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', placeholders: ['adv', 'noun'] },
-                    { id: 's3', text: '{His} {adj3} attitude is reflected in the high quality of {his} school work.', placeholders: ['adj3'] }
+                    { id: 's1', label: 'Opening: Personality', text: '{Name} is a {adj1} student with {adj2} potential.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Body: Work Ethic', text: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', placeholders: ['adv', 'noun'] },
+                    { id: 's3', label: 'Closing: Attitude', text: '{His} {adj3} attitude is reflected in the high quality of {his} school work.', placeholders: ['adj3'] }
                 ],
                 pools: {
                     adj1: ['capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)'],
@@ -300,9 +300,9 @@
                 category: 'high',
                 icon: '📚',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: '{He} is a {adj3} worker who always completes assignments {adv}.', placeholders: ['adj3', 'adv'] },
-                    { id: 's3', text: 'With more {noun}, {he} will be able to perform even better.', placeholders: ['noun'] }
+                    { id: 's1', label: 'Opening: Character', text: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Body: Work Habits', text: '{He} is a {adj3} worker who always completes assignments {adv}.', placeholders: ['adj3', 'adv'] },
+                    { id: 's3', label: 'Closing: Potential', text: 'With more {noun}, {he} will be able to perform even better.', placeholders: ['noun'] }
                 ],
                 pools: {
                     adj1: ['gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)'],
@@ -319,9 +319,9 @@
                 category: 'high',
                 icon: '🤝',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who gets along well with others.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: '{He} deserves credit for discharging {his} duties as {role} faithfully.', placeholders: ['role'] },
-                    { id: 's3', text: '{He} is quick to accept advice and {phrase}.', placeholders: ['phrase'] }
+                    { id: 's1', label: 'Opening: Social', text: '{Name} is a {adj1} and {adj2} student who gets along well with others.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Body: Duties', text: '{He} deserves credit for discharging {his} duties as {role} faithfully.', placeholders: ['role'] },
+                    { id: 's3', label: 'Closing: Attitude', text: '{He} is quick to accept advice and {phrase}.', placeholders: ['phrase'] }
                 ],
                 pools: {
                     adj1: ['friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)'],
@@ -337,9 +337,9 @@
                 category: 'high',
                 icon: '📈',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} student of {adj2} potential.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: '{He} has achieved satisfactory results in most subjects.', placeholders: [] },
-                    { id: 's3', text: '{He} should continue to {phrase} for improvement.', placeholders: ['phrase'] }
+                    { id: 's1', label: 'Opening: Potential', text: '{Name} is a {adj1} student of {adj2} potential.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Body: Results', text: '{He} has achieved satisfactory results in most subjects.', placeholders: [] },
+                    { id: 's3', label: 'Closing: Advice', text: '{He} should continue to {phrase} for improvement.', placeholders: ['phrase'] }
                 ],
                 pools: {
                     adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)'],
@@ -357,9 +357,9 @@
                 category: 'potential',
                 icon: '💡',
                 segments: [
-                    { id: 's1', text: '{Name} is an {adj1} learner with good potential.', placeholders: ['adj1'] },
-                    { id: 's2', text: 'However, {he} sometimes {verb} in class.', placeholders: ['verb'] },
-                    { id: 's3', text: 'If {he} can show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
+                    { id: 's1', label: 'Opening: Potential', text: '{Name} is an {adj1} learner with good potential.', placeholders: ['adj1'] },
+                    { id: 's2', label: 'Body: Issue', text: 'However, {he} sometimes {verb} in class.', placeholders: ['verb'] },
+                    { id: 's3', label: 'Closing: Advice', text: 'If {he} can show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
                 ],
                 pools: {
                     adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)'],
@@ -374,8 +374,8 @@
                 category: 'potential',
                 icon: '🐢',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard.', placeholders: ['adj1', 'noun1'] },
-                    { id: 's2', text: '{He} could make further progress in {his} studies by {phrase}.', placeholders: ['phrase'] }
+                    { id: 's1', label: 'Opening: Weakness', text: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard.', placeholders: ['adj1', 'noun1'] },
+                    { id: 's2', label: 'Closing: Advice', text: '{He} could make further progress in {his} studies by {phrase}.', placeholders: ['phrase'] }
                 ],
                 pools: {
                     adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
@@ -390,8 +390,8 @@
                 category: 'potential',
                 icon: '🧘',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: '{He} could show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
+                    { id: 's1', label: 'Opening: Character', text: '{Name} is a {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Closing: Advice', text: '{He} could show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
                 ],
                 pools: {
                     adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
@@ -409,8 +409,8 @@
                 category: 'social',
                 icon: '⚡',
                 segments: [
-                    { id: 's1', text: '{Name} is a very {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: 'While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.', placeholders: ['adj3', 'noun'] }
+                    { id: 's1', label: 'Opening: Personality', text: '{Name} is a very {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Closing: Advice', text: 'While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.', placeholders: ['adj3', 'noun'] }
                 ],
                 pools: {
                     adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)'],
@@ -426,8 +426,8 @@
                 category: 'social',
                 icon: '😊',
                 segments: [
-                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who gets along well with classmates.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', text: 'Greater success is expected if {he} pays more {noun}.', placeholders: ['noun'] }
+                    { id: 's1', label: 'Opening: Social', text: '{Name} is a {adj1} and {adj2} student who gets along well with classmates.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', label: 'Closing: Advice', text: 'Greater success is expected if {he} pays more {noun}.', placeholders: ['noun'] }
                 ],
                 pools: {
                     adj1: ['sincere (真誠的)', 'kind (善良的)', 'warm-hearted (熱心的)', 'pleasant (令人愉快的)'],
@@ -442,8 +442,8 @@
                 category: 'social',
                 icon: '💬',
                 segments: [
-                    { id: 's1', text: '{Name} gets along well with others but is sometimes {adj1} in class.', placeholders: ['adj1'] },
-                    { id: 's2', text: '{He} is capable of making further progress if {he} shows more {noun} in {subject}.', placeholders: ['noun', 'subject'] }
+                    { id: 's1', label: 'Opening: Behavior', text: '{Name} gets along well with others but is sometimes {adj1} in class.', placeholders: ['adj1'] },
+                    { id: 's2', label: 'Closing: Advice', text: '{He} is capable of making further progress if {he} shows more {noun} in {subject}.', placeholders: ['noun', 'subject'] }
                 ],
                 pools: {
                     adj1: ['talkative (多言的)', 'chatty (愛聊天的)', 'distracted (分心的)', 'restless (坐立不安的)'],
@@ -607,7 +607,8 @@
                 const label = document.createElement('label');
                 label.htmlFor = checkboxId;
                 label.className = "font-bold text-slate-700 cursor-pointer select-none";
-                label.textContent = `Sentence ${index + 1}`;
+                // --- UPDATE: Use Descriptive Label instead of 'Sentence X' ---
+                label.textContent = seg.label || `Sentence ${index + 1}`; 
 
                 header.appendChild(checkbox);
                 header.appendChild(label);
