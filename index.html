@@ -3,46 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v9</title>
+    <title>HK Report Card Generator v10</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Favicon SVG -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <style>
         body { 
             font-family: 'Noto Sans', sans-serif; 
             background: #f0f4f8;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 24px 24px;
         }
         
-        /* Glassmorphism Card Style */
+        /* Glassmorphism */
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             border-radius: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .vibe-card { 
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-            cursor: pointer; 
-            position: relative;
-            overflow: hidden;
+        /* Option Cards in Step 2 */
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 2px solid transparent;
         }
-        .vibe-card:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 12px 20px -5px rgba(59, 130, 246, 0.15); 
-            border-color: #93c5fd;
+        .option-card:hover {
+            transform: translateY(-2px);
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
         }
-        .vibe-card.active { 
-            border-color: #3b82f6; 
-            background-color: #eff6ff; 
-            box-shadow: 0 0 0 2px #3b82f6;
+        .option-card.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
         }
-        
+
+        /* Word Chips */
         .word-chip { 
             transition: all 0.15s ease; 
             cursor: pointer; 
@@ -60,75 +60,37 @@
             border-color: #2563eb; 
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
-        .word-chip.active:hover {
-            background-color: #1d4ed8;
-        }
+        .word-chip.active:hover { background-color: #1d4ed8; }
         
         .step-badge { 
-            width: 28px; 
-            height: 28px; 
-            border-radius: 8px; 
-            background: #dbeafe; 
-            color: #1e40af; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 14px; 
-            font-weight: 800; 
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+            width: 28px; height: 28px; border-radius: 8px; 
+            background: #dbeafe; color: #1e40af; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; font-weight: 800; 
         }
-
-        .category-tab {
-            transition: all 0.2s;
-        }
-        .category-tab.active {
-            background: #2563eb;
-            color: white;
-            shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
-        }
-        
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .reveal-content {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s ease-out;
-            opacity: 0;
+            display: grid; grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out; opacity: 0;
         }
-        .reveal-content.open {
-            grid-template-rows: 1fr;
-            opacity: 1;
-            margin-bottom: 2rem;
-        }
+        .reveal-content.open { grid-template-rows: 1fr; opacity: 1; margin-bottom: 1.5rem; }
         .inner-content { overflow: hidden; }
 
-        /* Custom Checkbox */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #2563eb;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #2563eb;
-        }
+        /* Custom Scrollbar for horizontal lists */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="pb-48">
+<body class="pb-64 text-slate-800">
 
     <!-- Navbar -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <nav class="bg-white/80 backdrop-blur-md border-b border-white/50 sticky top-0 z-50 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v9</span></h1>
-                </div>
+                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v10</span></h1>
             </div>
             <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -142,35 +104,26 @@
         <!-- INSTRUCTIONS -->
         <div id="instructions" class="reveal-content glass-card border-l-4 border-l-blue-500">
             <div class="inner-content p-6">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">Quick Guide</h2>
+                <h2 class="text-lg font-bold text-slate-800 mb-4">How to Mix & Match</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-600">
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">1</div>
-                        <div>
-                            <p class="font-bold text-slate-800 mb-1">Input Profile</p>
-                            <p>Enter name and gender. Names are auto-capitalized.</p>
-                        </div>
+                        <div><p class="font-bold text-slate-800">Student Info</p><p>Name & Gender (auto-corrects grammar).</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">2</div>
-                        <div>
-                            <p class="font-bold text-slate-800 mb-1">Select & Filter</p>
-                            <p>Use the tabs to filter vibes (e.g., High Achievers, Social) and select a profile.</p>
-                        </div>
+                        <div><p class="font-bold text-slate-800">Build Sentence</p><p>Select an Opening, Body, and Closing independently. Uncheck any you don't need.</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">3</div>
-                        <div>
-                            <p class="font-bold text-slate-800 mb-1">Check & Customize</p>
-                            <p><strong>Uncheck</strong> sentences you don't want. Click words to customize the text.</p>
-                        </div>
+                        <div><p class="font-bold text-slate-800">Fill Words</p><p>Click the generated blue chips to customize adjectives and nouns.</p></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 1: Student Details -->
-        <section class="glass-card p-8">
+        <!-- STEP 1 -->
+        <section class="glass-card p-6 md:p-8">
             <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
                 <span class="step-badge">1</span> Student Details
             </h2>
@@ -178,22 +131,21 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Student Name</label>
                     <input type="text" id="studentName" placeholder="e.g. Chan Tai Man" 
-                        class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-lg placeholder-slate-300"
+                        class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-lg placeholder-slate-300"
                         oninput="updatePreview()" onblur="autoFormatNameInput()">
-                    <p class="text-[10px] text-slate-400 mt-1 pl-1">Auto-converts to Title Case</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Gender</label>
                     <div class="flex gap-4">
                         <label class="flex-1 relative group">
-                            <input type="radio" name="gender" value="M" checked class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer bg-slate-50 hover:border-blue-200 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all">
+                            <input type="radio" name="gender" value="M" checked class="peer sr-only" onchange="updatePreview()">
+                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer hover:border-blue-200 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all">
                                 <span class="text-xl">👦</span> <span class="font-bold">Male</span>
                             </div>
                         </label>
                         <label class="flex-1 relative group">
-                            <input type="radio" name="gender" value="F" class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer bg-slate-50 hover:border-pink-200 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all">
+                            <input type="radio" name="gender" value="F" class="peer sr-only" onchange="updatePreview()">
+                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer hover:border-pink-200 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all">
                                 <span class="text-xl">👧</span> <span class="font-bold">Female</span>
                             </div>
                         </label>
@@ -202,41 +154,70 @@
             </div>
         </section>
 
-        <!-- SECTION 2: Select Vibe -->
-        <section class="glass-card p-8">
-            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
-                <span class="step-badge">2</span> Select Student Profile
+        <!-- STEP 2 -->
+        <section class="glass-card p-6 md:p-8">
+            <h2 class="text-lg font-bold text-slate-700 mb-2 flex items-center gap-3">
+                <span class="step-badge">2</span> Build Comment Structure
             </h2>
+            <p class="text-sm text-slate-500 mb-6 pl-10">Select a style for each part of the report card. Uncheck to skip.</p>
             
-            <!-- Category Tabs -->
-            <div class="flex flex-wrap gap-2 mb-6">
-                <button onclick="filterVibes('all')" class="category-tab active px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-all">All</button>
-                <button onclick="filterVibes('high')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-high">High Achievers & Diligent</button>
-                <button onclick="filterVibes('potential')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-potential">Potential & Improvement</button>
-                <button onclick="filterVibes('social')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-social">Social & Personality</button>
-            </div>
+            <div class="space-y-8">
+                <!-- Sentence 1 Picker -->
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enableS1" checked onchange="toggleSegment('s1')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
+                            <label for="enableS1" class="font-bold text-slate-700">Sentence 1: Opening (Personality)</label>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">Select Style 👇</span>
+                    </div>
+                    <div id="s1-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" id="vibeContainer">
-                <!-- Vibe Cards generated by JS -->
+                <!-- Sentence 2 Picker -->
+                <div class="relative pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enableS2" checked onchange="toggleSegment('s2')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
+                            <label for="enableS2" class="font-bold text-slate-700">Sentence 2: Body (Performance)</label>
+                        </div>
+                    </div>
+                    <div id="s2-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+
+                <!-- Sentence 3 Picker -->
+                <div class="relative pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="enableS3" checked onchange="toggleSegment('s3')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
+                            <label for="enableS3" class="font-bold text-slate-700">Sentence 3: Closing (Advice)</label>
+                        </div>
+                    </div>
+                    <div id="s3-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- SECTION 3: Customize Words -->
-        <section id="customizationSection" class="glass-card p-8 hidden fade-in">
-            <h2 class="text-lg font-bold text-slate-700 mb-2 flex items-center gap-3">
-                <span class="step-badge">3</span> Customize Sentences
+        <!-- STEP 3 -->
+        <section id="customizationSection" class="glass-card p-6 md:p-8 hidden">
+            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
+                <span class="step-badge">3</span> Fill in the Blanks
             </h2>
-            <p class="text-sm text-slate-500 mb-6 pl-10">Uncheck sentences you want to remove. Click words to change them.</p>
-            
-            <div id="segmentContainer" class="space-y-6">
-                <!-- Dynamic Segments generated by JS -->
+            <div id="wordPools" class="space-y-8">
+                <!-- Dynamic Pools -->
             </div>
         </section>
 
     </main>
 
     <!-- FOOTER PREVIEW -->
-    <footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-white/50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40 transition-all">
+    <footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-white/50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
             <div class="flex-1 w-full">
                 <div class="flex justify-between items-end mb-2">
@@ -244,15 +225,15 @@
                      <span id="wordCount" class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">0 words</span>
                 </div>
                 <div id="previewText" class="text-xl font-serif text-slate-800 leading-relaxed min-h-[3.5rem] p-4 bg-white rounded-xl border border-slate-200 shadow-sm transition-colors">
-                    Select a vibe above...
+                    ...
                 </div>
             </div>
             <div class="shrink-0 w-full md:w-auto self-center md:self-auto">
-                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 active:shadow-none hover:-translate-y-1">
+                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 hover:-translate-y-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
-                    Copy Text
+                    Copy
                 </button>
             </div>
         </div>
@@ -260,522 +241,262 @@
 
     <!-- Toast -->
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-8 py-4 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-3 translate-y-4 font-medium">
-        <div class="bg-green-500 rounded-full p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-        </div>
-        <span>Copied to clipboard!</span>
+        <div class="bg-green-500 rounded-full p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></div>
+        <span>Copied!</span>
     </div>
 
     <script>
-        // --- DATA STRUCTURES (MODULARIZED & ENRICHED) ---
+        // --- CONFIG DATA ---
         
-        // Categories: 'high' (High Achievers), 'potential' (Needs Improvement), 'social' (Social)
-        
-        const vibes = [
-            {
-                id: 'allrounder',
-                title: 'All-Rounder',
-                subtitle: 'High Achiever / 全能型',
-                category: 'high',
-                icon: '🌟',
-                segments: [
-                    { id: 's1', label: 'Opening: Personality', text: '{Name} is a {adj1} student with {adj2} potential.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Body: Work Ethic', text: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', placeholders: ['adv', 'noun'] },
-                    { id: 's3', label: 'Closing: Attitude', text: '{His} {adj3} attitude is reflected in the high quality of {his} school work.', placeholders: ['adj3'] }
-                ],
-                pools: {
-                    adj1: [
-                        'capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)',
-                        'logical (合乎邏輯的)', 'self-confident (有自信的)', 'conscientious (認真盡責的)', 'bright (聰明的)'
-                    ],
-                    adj2: [
-                        'excellent (優秀的)', 'promising (有前途的)', 'outstanding (傑出的)', 'tremendous (極大的)', 
-                        'great (巨大的)', 'unlimited (無限的)'
-                    ],
-                    adv: [
-                        'steadily (穩定地)', 'conscientiously (認真地)', 'diligently (勤奮地)', 'consistently (一貫地)', 
-                        'tirelessly (不知疲倦地)', 'systematically (有系統地)'
-                    ],
-                    noun: [
-                        'responsibility (責任感)', 'leadership (領導能力)', 'perseverance (毅力)', 'integrity (正直)', 
-                        'determination (決心)', 'initiative (主動性)', 'self-discipline (自律)'
-                    ],
-                    adj3: [
-                        'sincere (真誠的)', 'positive (積極的)', 'serious (嚴肅的)', 'mature (成熟的)', 
-                        'diligent (勤奮的)', 'systematic (有系統的)'
-                    ]
-                }
-            },
-            {
-                id: 'quiet',
-                title: 'Quiet & Diligent',
-                subtitle: 'Steady Worker / 文靜勤奮型',
-                category: 'high',
-                icon: '📚',
-                segments: [
-                    { id: 's1', label: 'Opening: Character', text: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Body: Work Habits', text: '{He} is a {adj3} worker who always completes assignments {adv}.', placeholders: ['adj3', 'adv'] },
-                    { id: 's3', label: 'Closing: Potential', text: 'With more {noun}, {he} will be able to perform even better.', placeholders: ['noun'] }
-                ],
-                pools: {
-                    adj1: [
-                        'gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)', 
-                        'good-natured (脾氣好的)', 'considerate (體諒的)'
-                    ],
-                    adj2: [
-                        'polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)', 
-                        'faithful (忠實的)', 'reliable (可靠的)'
-                    ],
-                    adj3: [
-                        'steady (穩定的)', 'diligent (勤奮的)', 'conscientious (認真的)', 'hardworking (努力的)', 
-                        'consistent (一貫的)'
-                    ],
-                    adv: [
-                        'carefully (仔細地)', 'punctually (準時地)', 'neatly (整潔地)', 'thoroughly (徹底地)', 
-                        'with effort (努力地)'
-                    ],
-                    noun: [
-                        'confidence (自信)', 'initiative (主動性)', 'active participation (積極參與)', 'courage (勇氣)'
-                    ]
-                }
-            },
-            {
-                id: 'leader',
-                title: 'Helpful Leader',
-                subtitle: 'Monitor/Service / 領袖服務型',
-                category: 'high',
-                icon: '🤝',
-                segments: [
-                    { id: 's1', label: 'Opening: Social', text: '{Name} is a {adj1} and {adj2} student who gets along well with others.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Body: Duties', text: '{He} deserves credit for discharging {his} duties as {role} faithfully.', placeholders: ['role'] },
-                    { id: 's3', label: 'Closing: Attitude', text: '{He} is quick to accept advice and {phrase}.', placeholders: ['phrase'] }
-                ],
-                pools: {
-                    adj1: [
-                        'friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)', 
-                        'trustworthy (值得信賴的)', 'approachable (平易近人的)'
-                    ],
-                    adj2: [
-                        'reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'committed (盡責的)', 
-                        'co-operative (合作的)', 'sympathetic (有同情心的)'
-                    ],
-                    role: ['Class Monitor (班長)', 'Class Monitress (女班長)', 'Prefect (領袖生)', 'IT Prefect (IT領袖生)', 'Subject Leader (科長)'],
-                    phrase: ['eager to improve (渴望進步)', 'willing to serve (樂意服務)', 'sets a good example (樹立好榜樣)']
-                }
-            },
-            {
-                id: 'diligent_potential',
-                title: 'Diligent & Potential',
-                subtitle: 'Good Potential / 勤奮潛質型',
-                category: 'high',
-                icon: '📈',
-                segments: [
-                    { id: 's1', label: 'Opening: Potential', text: '{Name} is a {adj1} student of {adj2} potential.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Body: Results', text: '{He} has achieved satisfactory results in most subjects.', placeholders: [] },
-                    { id: 's3', label: 'Closing: Advice', text: '{He} should continue to {phrase} for improvement.', placeholders: ['phrase'] }
-                ],
-                pools: {
-                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)', 'earnest (認真的)'],
-                    adj2: ['above-average (高於平均的)', 'good (良好的)', 'promising (有前途的)', 'great (巨大的)'],
-                    phrase: ['work hard (努力工作)', 'strive for excellence (追求卓越)', 'maintain his efforts (保持努力)', 'read more broadly (廣泛閱讀)']
-                }
-            },
-            
-            // --- POTENTIAL & IMPROVEMENT ---
-            
-            {
-                id: 'distracted',
-                title: 'Capable but Distracted',
-                subtitle: 'Needs Focus / 有能力但分心型',
-                category: 'potential',
-                icon: '💡',
-                segments: [
-                    { id: 's1', label: 'Opening: Potential', text: '{Name} is an {adj1} learner with good potential.', placeholders: ['adj1'] },
-                    { id: 's2', label: 'Body: Issue', text: 'However, {he} sometimes {verb} in class.', placeholders: ['verb'] },
-                    { id: 's3', label: 'Closing: Advice', text: 'If {he} can show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
-                ],
-                pools: {
-                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)', 'capable (有能力的)'],
-                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)', 'is careless (粗心大意)'],
-                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)', 'self-discipline (自律)']
-                }
-            },
-            {
-                id: 'smart_passive',
-                title: 'Smart but Passive',
-                subtitle: 'Lacks Drive / 聰明被動型',
-                category: 'potential',
-                icon: '🐢',
-                segments: [
-                    { id: 's1', label: 'Opening: Weakness', text: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard.', placeholders: ['adj1', 'noun1'] },
-                    { id: 's2', label: 'Closing: Advice', text: '{He} could make further progress in {his} studies by {phrase}.', placeholders: ['phrase'] }
-                ],
-                pools: {
-                    adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
-                    noun1: ['strong determination (強大的決心)', 'motivation (動力)', 'initiative (主動性)', 'drive (幹勁)'],
-                    phrase: ['working harder (更努力工作)', 'taking an active role in learning (積極參與學習)', 'being more proactive (更加主動)', 'setting higher goals (設定更高目標)']
-                }
-            },
-            {
-                id: 'polite_unfocused',
-                title: 'Polite but Unfocused',
-                subtitle: 'Needs Concentration / 有禮欠專注',
-                category: 'potential',
-                icon: '🧘',
-                segments: [
-                    { id: 's1', label: 'Opening: Character', text: '{Name} is a {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Closing: Advice', text: '{He} could show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
-                ],
-                pools: {
-                    adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
-                    adj2: ['obedient (聽話的)', 'well-behaved (行為良好的)', 'respectful (尊重的)', 'quiet (安靜的)'],
-                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)', 'attention to details (對細節的關注)']
-                }
-            },
-
-            // --- SOCIAL & PERSONALITY ---
-
-            {
-                id: 'social',
-                title: 'Social & Energetic',
-                subtitle: 'Active / 社交活躍型',
-                category: 'social',
-                icon: '⚡',
-                segments: [
-                    { id: 's1', label: 'Opening: Personality', text: '{Name} is a very {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Closing: Advice', text: 'While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.', placeholders: ['adj3', 'noun'] }
-                ],
-                pools: {
-                    adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)', 'upbeat (活躍積極的)'],
-                    adj2: ['positive (正面的)', 'optimistic (樂觀的)', 'sociable (善於社交的)', 'warm-hearted (熱心的)'],
-                    adj3: ['friendly (友善的)', 'popular (受歡迎的)', 'supportive (支持他人的)', 'generous (大方的)'],
-                    noun: ['motivation (動力)', 'academic focus (學業專注)', 'attentiveness (專注力)']
-                }
-            },
-            {
-                id: 'sincere_careless',
-                title: 'Friendly but Careless',
-                subtitle: 'Need Details / 友善粗心型',
-                category: 'social',
-                icon: '😊',
-                segments: [
-                    { id: 's1', label: 'Opening: Social', text: '{Name} is a {adj1} and {adj2} student who gets along well with classmates.', placeholders: ['adj1', 'adj2'] },
-                    { id: 's2', label: 'Closing: Advice', text: 'Greater success is expected if {he} pays more {noun}.', placeholders: ['noun'] }
-                ],
-                pools: {
-                    adj1: ['sincere (真誠的)', 'kind (善良的)', 'warm-hearted (熱心的)', 'pleasant (令人愉快的)'],
-                    adj2: ['friendly (友善的)', 'polite (有禮貌的)', 'helpful (樂於助人的)', 'easy-going (隨和的)'],
-                    noun: ['attention to details (對細節的關注)', 'carefulness in work (工作的細心)', 'patience (耐性)']
-                }
-            },
-            {
-                id: 'social_talkative',
-                title: 'Social but Talkative',
-                subtitle: 'Needs Initiative / 社交多言型',
-                category: 'social',
-                icon: '💬',
-                segments: [
-                    { id: 's1', label: 'Opening: Behavior', text: '{Name} gets along well with others but is sometimes {adj1} in class.', placeholders: ['adj1'] },
-                    { id: 's2', label: 'Closing: Advice', text: '{He} is capable of making further progress if {he} shows more {noun} in {subject}.', placeholders: ['noun', 'subject'] }
-                ],
-                pools: {
-                    adj1: ['talkative (多言的)', 'chatty (愛聊天的)', 'distracted (分心的)', 'restless (坐立不安的)'],
-                    noun: ['initiative (主動性)', 'concentration (專注力)', 'effort (努力)', 'seriousness (認真)'],
-                    subject: ['learning English (學習英語)', 'his studies (他的學業)', 'class participation (課堂參與)', 'Mathematics (數學)']
-                }
-            }
+        const openings = [
+            { id: 'op1', title: 'High Achiever', template: '{Name} is a {adj1} student with {adj2} potential.', pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }},
+            { id: 'op2', title: 'Quiet/Polite', template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', pools: { adj1: ['gentle (溫和的)','quiet (安靜的)','calm (冷靜的)'], adj2: ['polite (有禮貌的)','obedient (聽話的)','courteous (謙恭的)'] }},
+            { id: 'op3', title: 'Social/Active', template: '{Name} is a very {adj1} and {adj2} student.', pools: { adj1: ['energetic (充滿活力的)','outgoing (外向的)','cheerful (開朗的)'], adj2: ['sociable (善於社交的)','positive (正面的)','optimistic (樂觀的)'] }},
+            { id: 'op4', title: 'Leader/Helper', template: '{Name} is a {adj1} and {adj2} student who gets along well with others.', pools: { adj1: ['helpful (樂於助人的)','friendly (友善的)'], adj2: ['responsible (負責任的)','trustworthy (值得信賴的)'] }},
+            { id: 'op5', title: 'Distracted', template: '{Name} is an {adj1} learner with good potential.', pools: { adj1: ['active (活躍的)','intelligent (聰穎的)','agile (思維敏捷的)'] }},
+            { id: 'op6', title: 'Passive', template: '{Name} is a {adj1} student but {he} lacks {noun1}.', pools: { adj1: ['smart (聰明的)','capable (有能力的)'], noun1: ['initiative (主動性)','drive (幹勁)','confidence (自信)'] }}
         ];
 
-        // --- GLOBAL STATE ---
-        let currentVibe = null;
-        let selections = {};
-        let activeSegments = {}; // Tracks which segments are checked
-        let currentCategory = 'all';
+        const bodies = [
+            { id: 'bd1', title: 'Strong Work Ethic', template: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', pools: { adv: ['steadily (穩定地)','diligently (勤奮地)','consistently (一貫地)'], noun: ['responsibility (責任感)','perseverance (毅力)','integrity (正直)'] }},
+            { id: 'bd2', title: 'Consistent Worker', template: '{He} is a {adj} worker who always completes assignments {adv}.', pools: { adj: ['steady (穩定的)','conscientious (認真的)'], adv: ['carefully (仔細地)','punctually (準時地)','neatly (整潔地)'] }},
+            { id: 'bd3', title: 'Satisfactory Results', template: '{He} has achieved satisfactory results in most subjects.', pools: {} },
+            { id: 'bd4', title: 'Duties/Role', template: '{He} deserves credit for discharging {his} duties as {role} faithfully.', pools: { role: ['Class Monitor','Prefect','Subject Leader'] }},
+            { id: 'bd5', title: 'Distracted Behavior', template: 'However, {he} sometimes {verb} in class.', pools: { verb: ['lacks concentration (欠缺集中力)','is talkative (多言)','daydreams (發白日夢)'] }},
+            { id: 'bd6', title: 'Good Behavior', template: '{He} is attentive and shows good response in class.', pools: {} }
+        ];
 
-        // --- FUNCTIONS ---
+        const closings = [
+            { id: 'cl1', title: 'General Advice', template: '{He} should continue to {phrase} for improvement.', pools: { phrase: ['strive for excellence (追求卓越)','work hard (努力工作)','read more broadly (廣泛閱讀)'] }},
+            { id: 'cl2', title: 'Attitude Check', template: '{His} {adj} attitude is reflected in the high quality of {his} school work.', pools: { adj: ['sincere (真誠的)','positive (積極的)','serious (嚴肅的)'] }},
+            { id: 'cl3', title: 'Need Improvement', template: 'If {he} can show more {noun} in {subject}, better results are expected.', pools: { noun: ['effort (努力)','focus (專注)','determination (決心)'], subject: ['weak subjects (弱勢學科)','English (英語)','Mathematics (數學)'] }},
+            { id: 'cl4', title: 'Social Advice', template: 'Greater success is expected if {he} pays more {noun}.', pools: { noun: ['attention to details (對細節的關注)','patience (耐性)'] }},
+            { id: 'cl5', title: 'Specific Advice', template: '{He} needs greater {noun} to achieve a higher academic standard.', pools: { noun: ['motivation (動力)','self-discipline (自律)','concentration (專注力)'] }},
+            { id: 'cl6', title: 'Encouraging', template: 'With more {noun}, {he} will be able to perform even better.', pools: { noun: ['confidence (自信)','initiative (主動性)'] }}
+        ];
 
+        // --- STATE ---
+        let state = {
+            s1: 'op1', s1Enabled: true,
+            s2: 'bd1', s2Enabled: true,
+            s3: 'cl1', s3Enabled: true,
+            selections: {}
+        };
+
+        // --- INIT ---
         function init() {
-            filterVibes('all');
+            renderOptions('s1', openings);
+            renderOptions('s2', bodies);
+            renderOptions('s3', closings);
+            // Set defaults
+            selectOption('s1', 'op1');
+            selectOption('s2', 'bd3'); // Satisfactory results as default body
+            selectOption('s3', 'cl1');
         }
 
-        function toggleInstructions() {
-            const el = document.getElementById('instructions');
-            el.classList.toggle('open');
-        }
-
-        function toTitleCase(str) {
-            if (!str) return "";
-            return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        }
-
-        function autoFormatNameInput() {
-            const input = document.getElementById('studentName');
-            input.value = toTitleCase(input.value);
-            updatePreview();
-        }
-
-        // --- STEP 2: CATEGORY FILTERING ---
-
-        function filterVibes(category) {
-            currentCategory = category;
-            
-            // Update tabs UI
-            document.querySelectorAll('.category-tab').forEach(btn => {
-                if (btn.id === `tab-${category}`) {
-                    btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-md');
-                    btn.classList.remove('bg-slate-100', 'text-slate-600');
-                } else {
-                    btn.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-md');
-                    btn.classList.add('bg-slate-100', 'text-slate-600');
-                }
-            });
-
-            const container = document.getElementById('vibeContainer');
+        // --- UI RENDERING ---
+        function renderOptions(segment, data) {
+            const container = document.getElementById(`${segment}-options`);
             container.innerHTML = '';
             
-            const filtered = category === 'all' ? vibes : vibes.filter(v => v.category === category);
-            
-            filtered.forEach(vibe => {
+            data.forEach(opt => {
                 const card = document.createElement('div');
-                card.className = `vibe-card bg-white border border-slate-200 rounded-xl p-5 flex items-start gap-4 select-none`;
-                card.onclick = () => selectVibe(vibe.id, card);
-                
+                card.className = `option-card flex-shrink-0 w-48 bg-white rounded-xl p-4 border border-slate-200 snap-start`;
+                card.id = `card-${segment}-${opt.id}`;
+                card.onclick = () => selectOption(segment, opt.id);
                 card.innerHTML = `
-                    <div class="text-4xl bg-slate-50 p-3 rounded-2xl shrink-0 shadow-sm">${vibe.icon}</div>
-                    <div class="pt-1">
-                        <h3 class="font-bold text-slate-800 text-lg leading-tight">${vibe.title}</h3>
-                        <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wide">${vibe.subtitle}</p>
-                    </div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-1">${opt.title}</h3>
+                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${opt.template.replace(/\{.*?\}/g, '___')}</p>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // --- STEP 3: SELECTION & CUSTOMIZATION ---
+        function selectOption(segment, id) {
+            state[segment] = id;
+            
+            // Visual Active State
+            document.querySelectorAll(`#${segment}-options .option-card`).forEach(c => c.classList.remove('active'));
+            document.getElementById(`card-${segment}-${id}`).classList.add('active');
 
-        function selectVibe(vibeId, cardElement) {
-            currentVibe = vibes.find(v => v.id === vibeId);
-            
-            // Highlight Card
-            document.querySelectorAll('.vibe-card').forEach(c => c.classList.remove('active'));
-            cardElement.classList.add('active');
-            
-            // Reset State
-            selections = {};
-            activeSegments = {};
-            
-            // Initialize Defaults
-            currentVibe.segments.forEach(seg => {
-                activeSegments[seg.id] = true; // All enabled by default
-            });
-
-            Object.keys(currentVibe.pools).forEach(key => {
-                if (key === 'role') {
-                    const roleOptions = getRoleOptions();
-                    selections[key] = roleOptions[0].split(' (')[0];
-                } else {
-                    selections[key] = currentVibe.pools[key][0].split(' (')[0]; 
+            // Select defaults for this template
+            const templateData = getData(segment, id);
+            Object.keys(templateData.pools).forEach(key => {
+                const poolKey = `${segment}_${key}`; // Namespace: s1_adj1
+                if (!state.selections[poolKey]) {
+                    // special handling for roles
+                    if (key === 'role') {
+                        state.selections[poolKey] = getRoleOptions()[0].split(' (')[0];
+                    } else {
+                        state.selections[poolKey] = templateData.pools[key][0].split(' (')[0];
+                    }
                 }
             });
-            
-            renderSegments();
-            document.getElementById('customizationSection').classList.remove('hidden');
-            
-            if(window.innerWidth < 768) {
-                document.getElementById('customizationSection').scrollIntoView({behavior: 'smooth', block: 'start'});
-            }
-            
+
+            renderCustomization();
             updatePreview();
         }
 
-        function getRoleOptions() {
-            const gender = document.querySelector('input[name="gender"]:checked').value;
-            const originalRoles = currentVibe.pools.role || [];
-            return originalRoles.filter(r => {
-                if (r.includes('Class Monitor')) return gender === 'M';
-                if (r.includes('Class Monitress')) return gender === 'F';
-                return true;
-            });
-        }
-
-        function handleGenderChange() {
-            if (currentVibe && currentVibe.id === 'leader') {
-                renderSegments(); 
-                const availableRoles = getRoleOptions().map(r => r.split(' (')[0]);
-                if (!availableRoles.includes(selections.role)) {
-                   selections.role = availableRoles[0];
-                }
+        function toggleSegment(segment) {
+            state[`${segment}Enabled`] = document.getElementById(`enable${segment.toUpperCase()}`).checked;
+            const optionsDiv = document.getElementById(`${segment}-options`);
+            if (state[`${segment}Enabled`]) {
+                optionsDiv.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                optionsDiv.classList.add('opacity-50', 'pointer-events-none');
             }
+            renderCustomization();
             updatePreview();
         }
 
-        // --- RENDERING SEGMENTS & WORD POOLS ---
+        function getData(segment, id) {
+            if (segment === 's1') return openings.find(x => x.id === id);
+            if (segment === 's2') return bodies.find(x => x.id === id);
+            if (segment === 's3') return closings.find(x => x.id === id);
+        }
 
-        function renderSegments() {
-            const container = document.getElementById('segmentContainer');
+        function renderCustomization() {
+            const container = document.getElementById('wordPools');
             container.innerHTML = '';
+            let hasPools = false;
 
-            currentVibe.segments.forEach((seg, index) => {
-                // Outer Card for Segment
-                const segCard = document.createElement('div');
-                segCard.className = "bg-slate-50 border border-slate-200 rounded-xl p-5 transition-all";
-                if (!activeSegments[seg.id]) segCard.classList.add('opacity-50');
+            ['s1', 's2', 's3'].forEach((seg, index) => {
+                if (!state[`${seg}Enabled`]) return;
 
-                // Header with Checkbox
-                const header = document.createElement('div');
-                header.className = "flex items-center gap-3 mb-4";
+                const data = getData(seg, state[seg]);
+                const keys = Object.keys(data.pools);
                 
-                const checkboxId = `cb-${seg.id}`;
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = checkboxId;
-                checkbox.checked = activeSegments[seg.id];
-                checkbox.className = "w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer";
-                checkbox.onchange = (e) => {
-                    activeSegments[seg.id] = e.target.checked;
-                    renderSegments(); // Re-render to update opacity
-                    updatePreview();
-                };
+                if (keys.length > 0) {
+                    hasPools = true;
+                    const section = document.createElement('div');
+                    section.className = "border-l-4 border-slate-200 pl-4 py-1";
+                    
+                    const title = document.createElement('h4');
+                    title.className = "text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider";
+                    title.textContent = `Sentence ${index+1}: ${data.title}`;
+                    section.appendChild(title);
 
-                const label = document.createElement('label');
-                label.htmlFor = checkboxId;
-                label.className = "font-bold text-slate-700 cursor-pointer select-none";
-                label.textContent = seg.label || `Sentence ${index + 1}`; 
-
-                header.appendChild(checkbox);
-                header.appendChild(label);
-                segCard.appendChild(header);
-
-                // Word Pools (only if segment has placeholders)
-                if (seg.placeholders.length > 0) {
-                    const poolContainer = document.createElement('div');
-                    poolContainer.className = activeSegments[seg.id] ? "space-y-4 pl-8" : "hidden"; // Hide pools if unchecked
-
-                    seg.placeholders.forEach(key => {
+                    keys.forEach(key => {
                         const poolWrapper = document.createElement('div');
+                        poolWrapper.className = "mb-4 last:mb-0";
                         
-                        const poolLabel = document.createElement('p');
-                        poolLabel.className = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-2";
-                        poolLabel.textContent = formatLabel(key);
+                        const label = document.createElement('p');
+                        label.className = "text-xs font-semibold text-slate-500 mb-2";
+                        label.textContent = `Choose ${key}:`;
                         
                         const chips = document.createElement('div');
                         chips.className = "flex flex-wrap gap-2";
 
-                        let poolToRender = currentVibe.pools[key];
-                        if (key === 'role') poolToRender = getRoleOptions();
+                        let pool = data.pools[key];
+                        if (key === 'role') pool = getRoleOptions();
 
-                        poolToRender.forEach(item => {
+                        pool.forEach(item => {
                             const parts = item.match(/^(.*?) \((.*?)\)$/);
-                            const english = parts ? parts[1] : item;
-                            const chinese = parts ? parts[2] : '';
-                            const isSelected = selections[key] === english;
+                            const eng = parts ? parts[1] : item;
+                            const chi = parts ? parts[2] : '';
+                            const poolKey = `${seg}_${key}`;
+                            const isSelected = state.selections[poolKey] === eng;
 
-                            const chip = document.createElement('button');
-                            chip.className = `word-chip px-3 py-2 rounded-lg border text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300'}`;
-                            chip.onclick = () => {
-                                selections[key] = english;
-                                renderSegments();
+                            const btn = document.createElement('button');
+                            btn.className = `word-chip px-3 py-1.5 rounded-lg border text-left ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200'}`;
+                            btn.onclick = () => {
+                                state.selections[poolKey] = eng;
+                                renderCustomization();
                                 updatePreview();
                             };
-                            chip.innerHTML = `
-                                <span class="font-semibold">${english}</span>
-                                ${chinese ? `<span class="text-[10px] opacity-80 font-normal mt-0.5">${chinese}</span>` : ''}
-                            `;
-                            chips.appendChild(chip);
+                            btn.innerHTML = `<span class="font-medium">${eng}</span>${chi ? ` <span class="text-[10px] opacity-75"> ${chi}</span>` : ''}`;
+                            chips.appendChild(btn);
                         });
-
-                        poolWrapper.appendChild(poolLabel);
+                        
+                        poolWrapper.appendChild(label);
                         poolWrapper.appendChild(chips);
-                        poolContainer.appendChild(poolWrapper);
+                        section.appendChild(poolWrapper);
                     });
-                    segCard.appendChild(poolContainer);
+                    container.appendChild(section);
                 }
-
-                container.appendChild(segCard);
             });
+
+            const custSection = document.getElementById('customizationSection');
+            if (hasPools) custSection.classList.remove('hidden');
+            else custSection.classList.add('hidden');
         }
 
-        function formatLabel(key) {
-            if (key.startsWith('adj')) return 'Adjective';
-            if (key === 'adv') return 'Adverb';
-            if (key.startsWith('noun')) return 'Noun / Quality';
-            if (key === 'verb') return 'Verb';
-            if (key === 'phrase') return 'Phrase';
-            if (key === 'role') return 'Role / Duty';
-            if (key === 'subject') return 'Subject';
-            return key;
-        }
-
-        // --- PREVIEW LOGIC ---
-
-        function updatePreview() {
-            const nameInput = document.getElementById('studentName');
-            const rawName = nameInput.value.trim();
-            const formattedName = rawName ? toTitleCase(rawName) : "[Student Name]";
-            
+        // --- HELPERS ---
+        function getRoleOptions() {
             const gender = document.querySelector('input[name="gender"]:checked').value;
-            const previewBox = document.getElementById('previewText');
-            
-            if (!currentVibe) {
-                previewBox.innerHTML = '<span class="text-slate-400 italic">Select a vibe above...</span>';
-                return;
-            }
+            const roles = ['Class Monitor (班長)', 'Class Monitress (女班長)', 'Prefect (領袖生)', 'IT Prefect (IT領袖生)', 'Subject Leader (科長)'];
+            return roles.filter(r => {
+                if (r.includes('Monitor')) return gender === 'M';
+                if (r.includes('Monitress')) return gender === 'F';
+                return true;
+            });
+        }
 
-            const pronouns = gender === 'M' 
-                ? { sub: 'He', obj: 'him', poss: 'his' }
-                : { sub: 'She', obj: 'her', poss: 'her' };
+        function toTitleCase(str) {
+            return str ? str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+        }
 
-            // Construct Text from Enabled Segments
+        function autoFormatNameInput() {
+            const el = document.getElementById('studentName');
+            el.value = toTitleCase(el.value);
+            updatePreview();
+        }
+
+        function toggleInstructions() {
+            document.getElementById('instructions').classList.toggle('open');
+        }
+
+        // --- PREVIEW ---
+        function updatePreview() {
+            const name = document.getElementById('studentName').value || "[Name]";
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const p = gender === 'M' ? {sub:'He', obj:'him', poss:'his'} : {sub:'She', obj:'her', poss:'her'};
+
             let fullText = "";
-            
-            currentVibe.segments.forEach(seg => {
-                if (activeSegments[seg.id]) {
-                    fullText += seg.text + " ";
+
+            ['s1', 's2', 's3'].forEach(seg => {
+                if (state[`${seg}Enabled`]) {
+                    const data = getData(seg, state[seg]);
+                    let text = data.template;
+                    
+                    // Replace Words
+                    Object.keys(data.pools).forEach(key => {
+                        const val = state.selections[`${seg}_${key}`] || '___';
+                        text = text.replace(new RegExp(`{${key}}`, 'g'), `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded">${val}</span>`);
+                    });
+
+                    fullText += text + " ";
                 }
             });
 
-            // Replacements
+            // Replace Grammar
             let text = fullText.trim();
-            text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${formattedName}</span>`);
-            text = text.replace(/{He}/g, pronouns.sub);
-            text = text.replace(/{he}/g, pronouns.sub.toLowerCase());
-            text = text.replace(/{His}/g, pronouns.poss.charAt(0).toUpperCase() + pronouns.poss.slice(1));
-            text = text.replace(/{his}/g, pronouns.poss);
-            text = text.replace(/{Him}/g, pronouns.obj.charAt(0).toUpperCase() + pronouns.obj.slice(1));
-            text = text.replace(/{him}/g, pronouns.obj);
+            text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${toTitleCase(name)}</span>`);
+            text = text.replace(/{He}/g, p.sub);
+            text = text.replace(/{he}/g, p.sub.toLowerCase());
+            text = text.replace(/{His}/g, p.poss.charAt(0).toUpperCase() + p.poss.slice(1));
+            text = text.replace(/{his}/g, p.poss);
+            text = text.replace(/{Him}/g, p.obj.charAt(0).toUpperCase() + p.obj.slice(1));
+            text = text.replace(/{him}/g, p.obj);
 
-            Object.keys(selections).forEach(key => {
-                const word = selections[key];
-                const regex = new RegExp(`{${key}}`, 'g');
-                text = text.replace(regex, `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded border border-blue-100">${word}</span>`);
-            });
+            const box = document.getElementById('previewText');
+            box.innerHTML = text || '<span class="text-slate-400 italic">Select sentences above...</span>';
 
-            if (text === "") text = '<span class="text-slate-400 italic">No sentences selected. Check a box above.</span>';
-
-            previewBox.innerHTML = text;
-            
-            const plainText = previewBox.innerText;
-            const count = plainText.trim().split(/\s+/).filter(w => w.length > 0).length;
+            // Word Count
+            const count = box.innerText.trim().split(/\s+/).filter(w => w).length;
             document.getElementById('wordCount').innerText = `${count} words`;
         }
 
         function copyToClipboard() {
-            const previewDiv = document.getElementById('previewText');
-            if (!currentVibe) return;
-            const textToCopy = previewDiv.innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
+            const text = document.getElementById('previewText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
                 toast.classList.remove('opacity-0', 'translate-y-4');
-                setTimeout(() => {
-                    toast.classList.add('opacity-0', 'translate-y-4');
-                }, 2000);
+                setTimeout(() => toast.classList.add('opacity-0', 'translate-y-4'), 2000);
             });
         }
 
         window.onload = init;
-
     </script>
 </body>
 </html>
