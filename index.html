@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v6</title>
+    <title>HK Report Card Generator v7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     <!-- Favicon SVG -->
@@ -43,12 +43,11 @@
             box-shadow: 0 0 0 2px #3b82f6;
         }
         
-        /* Larger Chips */
         .word-chip { 
             transition: all 0.15s ease; 
             cursor: pointer; 
             user-select: none;
-            font-size: 1rem; /* Increased size */
+            font-size: 0.95rem;
         }
         .word-chip:hover { 
             transform: translateY(-1px); 
@@ -78,11 +77,19 @@
             font-weight: 800; 
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
         }
+
+        .category-tab {
+            transition: all 0.2s;
+        }
+        .category-tab.active {
+            background: #2563eb;
+            color: white;
+            shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
         
         .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Smooth reveal for instructions */
         .reveal-content {
             display: grid;
             grid-template-rows: 0fr;
@@ -95,6 +102,15 @@
             margin-bottom: 2rem;
         }
         .inner-content { overflow: hidden; }
+
+        /* Custom Checkbox */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #2563eb;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #2563eb;
+        }
     </style>
 </head>
 <body class="pb-48">
@@ -111,7 +127,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v6</span></h1>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v7</span></h1>
                 </div>
             </div>
             <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
@@ -123,7 +139,7 @@
 
     <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- TOGGLEABLE INSTRUCTIONS -->
+        <!-- INSTRUCTIONS -->
         <div id="instructions" class="reveal-content glass-card border-l-4 border-l-blue-500">
             <div class="inner-content p-6">
                 <h2 class="text-lg font-bold text-slate-800 mb-4">Quick Guide</h2>
@@ -132,21 +148,21 @@
                         <div class="step-badge shrink-0">1</div>
                         <div>
                             <p class="font-bold text-slate-800 mb-1">Input Profile</p>
-                            <p>Enter name and gender. Names are auto-capitalized (e.g., "tai man" → "Tai Man").</p>
+                            <p>Enter name and gender. Names are auto-capitalized.</p>
                         </div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">2</div>
                         <div>
-                            <p class="font-bold text-slate-800 mb-1">Select Vibe</p>
-                            <p>Choose from 10 student profiles below that best match your student.</p>
+                            <p class="font-bold text-slate-800 mb-1">Select & Filter</p>
+                            <p>Use the tabs to filter vibes (e.g., High Achievers, Social) and select a profile.</p>
                         </div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">3</div>
                         <div>
-                            <p class="font-bold text-slate-800 mb-1">Customize</p>
-                            <p>Click the large word chips to adjust the tone, then copy the result.</p>
+                            <p class="font-bold text-slate-800 mb-1">Check & Customize</p>
+                            <p><strong>Uncheck</strong> sentences you don't want. Click words to customize the text.</p>
                         </div>
                     </div>
                 </div>
@@ -191,6 +207,15 @@
             <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
                 <span class="step-badge">2</span> Select Student Profile
             </h2>
+            
+            <!-- Category Tabs -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button onclick="filterVibes('all')" class="category-tab active px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-all">All</button>
+                <button onclick="filterVibes('high')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-high">High Achievers & Diligent</button>
+                <button onclick="filterVibes('potential')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-potential">Potential & Improvement</button>
+                <button onclick="filterVibes('social')" class="category-tab px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" id="tab-social">Social & Personality</button>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" id="vibeContainer">
                 <!-- Vibe Cards generated by JS -->
             </div>
@@ -198,17 +223,19 @@
 
         <!-- SECTION 3: Customize Words -->
         <section id="customizationSection" class="glass-card p-8 hidden fade-in">
-            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
-                <span class="step-badge">3</span> Customize Vocabulary
+            <h2 class="text-lg font-bold text-slate-700 mb-2 flex items-center gap-3">
+                <span class="step-badge">3</span> Customize Sentences
             </h2>
-            <div id="wordPools" class="space-y-8">
-                <!-- Dynamic Word Pools generated by JS -->
+            <p class="text-sm text-slate-500 mb-6 pl-10">Uncheck sentences you want to remove. Click words to change them.</p>
+            
+            <div id="segmentContainer" class="space-y-6">
+                <!-- Dynamic Segments generated by JS -->
             </div>
         </section>
 
     </main>
 
-    <!-- SECTION 4: Sticky Footer Preview -->
+    <!-- FOOTER PREVIEW -->
     <footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-white/50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40 transition-all">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
             <div class="flex-1 w-full">
@@ -217,7 +244,7 @@
                      <span id="wordCount" class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">0 words</span>
                 </div>
                 <div id="previewText" class="text-xl font-serif text-slate-800 leading-relaxed min-h-[3.5rem] p-4 bg-white rounded-xl border border-slate-200 shadow-sm transition-colors">
-                    Select a vibe above to generate...
+                    Select a vibe above...
                 </div>
             </div>
             <div class="shrink-0 w-full md:w-auto self-center md:self-auto">
@@ -231,7 +258,7 @@
         </div>
     </footer>
 
-    <!-- Success Toast -->
+    <!-- Toast -->
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-8 py-4 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-3 translate-y-4 font-medium">
         <div class="bg-green-500 rounded-full p-1">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -242,15 +269,22 @@
     </div>
 
     <script>
-        // --- DATA STRUCTURES ---
+        // --- DATA STRUCTURES (MODULARIZED) ---
+        
+        // Categories: 'high' (High Achievers), 'potential' (Needs Improvement), 'social' (Social)
         
         const vibes = [
             {
                 id: 'allrounder',
                 title: 'All-Rounder',
                 subtitle: 'High Achiever / 全能型',
+                category: 'high',
                 icon: '🌟',
-                template: '{Name} is a {adj1} student with {adj2} potential. {He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}. {His} {adj3} attitude is reflected in the high quality of {his} school work.',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} student with {adj2} potential.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', placeholders: ['adv', 'noun'] },
+                    { id: 's3', text: '{His} {adj3} attitude is reflected in the high quality of {his} school work.', placeholders: ['adj3'] }
+                ],
                 pools: {
                     adj1: ['capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)'],
                     adj2: ['excellent (優秀的)', 'promising (有前途的)', 'outstanding (傑出的)', 'tremendous (極大的)'],
@@ -263,8 +297,13 @@
                 id: 'quiet',
                 title: 'Quiet & Diligent',
                 subtitle: 'Steady Worker / 文靜勤奮型',
+                category: 'high',
                 icon: '📚',
-                template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers. {He} is a {adj3} worker who always completes assignments {adv}. With more {noun}, {he} will be able to perform even better.',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: '{He} is a {adj3} worker who always completes assignments {adv}.', placeholders: ['adj3', 'adv'] },
+                    { id: 's3', text: 'With more {noun}, {he} will be able to perform even better.', placeholders: ['noun'] }
+                ],
                 pools: {
                     adj1: ['gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)'],
                     adj2: ['polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)'],
@@ -274,23 +313,16 @@
                 }
             },
             {
-                id: 'distracted',
-                title: 'Capable but Distracted',
-                subtitle: 'Needs Focus / 有能力但分心型',
-                icon: '💡',
-                template: '{Name} is an {adj1} learner with good potential. However, {he} sometimes {verb} in class. If {he} can show more {noun} in {his} weak subjects, better results are expected.',
-                pools: {
-                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)'],
-                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)'],
-                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)']
-                }
-            },
-            {
                 id: 'leader',
                 title: 'Helpful Leader',
                 subtitle: 'Monitor/Service / 領袖服務型',
+                category: 'high',
                 icon: '🤝',
-                template: '{Name} is a {adj1} and {adj2} student who gets along well with others. {He} deserves credit for discharging {his} duties as {role} faithfully. {He} is quick to accept advice and {phrase}.',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who gets along well with others.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: '{He} deserves credit for discharging {his} duties as {role} faithfully.', placeholders: ['role'] },
+                    { id: 's3', text: '{He} is quick to accept advice and {phrase}.', placeholders: ['phrase'] }
+                ],
                 pools: {
                     adj1: ['friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)'],
                     adj2: ['reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'committed (盡責的)'],
@@ -299,11 +331,87 @@
                 }
             },
             {
+                id: 'diligent_potential',
+                title: 'Diligent & Potential',
+                subtitle: 'Good Potential / 勤奮潛質型',
+                category: 'high',
+                icon: '📈',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} student of {adj2} potential.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: '{He} has achieved satisfactory results in most subjects.', placeholders: [] },
+                    { id: 's3', text: '{He} should continue to {phrase} for improvement.', placeholders: ['phrase'] }
+                ],
+                pools: {
+                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)'],
+                    adj2: ['above-average (高於平均的)', 'good (良好的)', 'promising (有前途的)', 'great (巨大的)'],
+                    phrase: ['work hard (努力工作)', 'strive for excellence (追求卓越)', 'maintain his efforts (保持努力)', 'read more broadly (廣泛閱讀)']
+                }
+            },
+            
+            // --- POTENTIAL & IMPROVEMENT ---
+            
+            {
+                id: 'distracted',
+                title: 'Capable but Distracted',
+                subtitle: 'Needs Focus / 有能力但分心型',
+                category: 'potential',
+                icon: '💡',
+                segments: [
+                    { id: 's1', text: '{Name} is an {adj1} learner with good potential.', placeholders: ['adj1'] },
+                    { id: 's2', text: 'However, {he} sometimes {verb} in class.', placeholders: ['verb'] },
+                    { id: 's3', text: 'If {he} can show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
+                ],
+                pools: {
+                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)'],
+                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)'],
+                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)']
+                }
+            },
+            {
+                id: 'smart_passive',
+                title: 'Smart but Passive',
+                subtitle: 'Lacks Drive / 聰明被動型',
+                category: 'potential',
+                icon: '🐢',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard.', placeholders: ['adj1', 'noun1'] },
+                    { id: 's2', text: '{He} could make further progress in {his} studies by {phrase}.', placeholders: ['phrase'] }
+                ],
+                pools: {
+                    adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
+                    noun1: ['strong determination (強大的決心)', 'motivation (動力)', 'initiative (主動性)', 'drive (幹勁)'],
+                    phrase: ['working harder (更努力工作)', 'taking an active role in learning (積極參與學習)', 'being more proactive (更加主動)', 'setting higher goals (設定更高目標)']
+                }
+            },
+            {
+                id: 'polite_unfocused',
+                title: 'Polite but Unfocused',
+                subtitle: 'Needs Concentration / 有禮欠專注',
+                category: 'potential',
+                icon: '🧘',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: '{He} could show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
+                ],
+                pools: {
+                    adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
+                    adj2: ['obedient (聽話的)', 'well-behaved (行為良好的)', 'respectful (尊重的)', 'quiet (安靜的)'],
+                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)']
+                }
+            },
+
+            // --- SOCIAL & PERSONALITY ---
+
+            {
                 id: 'social',
                 title: 'Social & Energetic',
                 subtitle: 'Active / 社交活躍型',
+                category: 'social',
                 icon: '⚡',
-                template: '{Name} is a very {adj1} and {adj2} student. While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.',
+                segments: [
+                    { id: 's1', text: '{Name} is a very {adj1} and {adj2} student.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: 'While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.', placeholders: ['adj3', 'noun'] }
+                ],
                 pools: {
                     adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)'],
                     adj2: ['positive (正面的)', 'optimistic (樂觀的)', 'upbeat (樂觀的)', 'sociable (善於社交的)'],
@@ -315,8 +423,12 @@
                 id: 'sincere_careless',
                 title: 'Friendly but Careless',
                 subtitle: 'Need Details / 友善粗心型',
+                category: 'social',
                 icon: '😊',
-                template: '{Name} is a {adj1} and {adj2} student who gets along well with classmates. Greater success is expected if {he} pays more {noun}.',
+                segments: [
+                    { id: 's1', text: '{Name} is a {adj1} and {adj2} student who gets along well with classmates.', placeholders: ['adj1', 'adj2'] },
+                    { id: 's2', text: 'Greater success is expected if {he} pays more {noun}.', placeholders: ['noun'] }
+                ],
                 pools: {
                     adj1: ['sincere (真誠的)', 'kind (善良的)', 'warm-hearted (熱心的)', 'pleasant (令人愉快的)'],
                     adj2: ['friendly (友善的)', 'polite (有禮貌的)', 'helpful (樂於助人的)', 'easy-going (隨和的)'],
@@ -324,69 +436,43 @@
                 }
             },
             {
-                id: 'smart_passive',
-                title: 'Smart but Passive',
-                subtitle: 'Lacks Drive / 聰明被動型',
-                icon: '🐢',
-                template: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard. {He} could make further progress in {his} studies by {phrase}.',
-                pools: {
-                    adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
-                    noun1: ['strong determination (強大的決心)', 'motivation (動力)', 'initiative (主動性)', 'drive (幹勁)'],
-                    phrase: ['working harder (更努力工作)', 'taking an active role in learning (積極參與學習)', 'being more proactive (更加主動)', 'setting higher goals (設定更高目標)']
-                }
-            },
-            {
                 id: 'social_talkative',
                 title: 'Social but Talkative',
                 subtitle: 'Needs Initiative / 社交多言型',
+                category: 'social',
                 icon: '💬',
-                template: '{Name} gets along well with others but is sometimes {adj1} in class. {He} is capable of making further progress if {he} shows more {noun} in {subject}.',
+                segments: [
+                    { id: 's1', text: '{Name} gets along well with others but is sometimes {adj1} in class.', placeholders: ['adj1'] },
+                    { id: 's2', text: '{He} is capable of making further progress if {he} shows more {noun} in {subject}.', placeholders: ['noun', 'subject'] }
+                ],
                 pools: {
                     adj1: ['talkative (多言的)', 'chatty (愛聊天的)', 'distracted (分心的)', 'restless (坐立不安的)'],
                     noun: ['initiative (主動性)', 'concentration (專注力)', 'effort (努力)', 'seriousness (認真)'],
                     subject: ['learning English (學習英語)', 'his studies (他的學業)', 'class participation (課堂參與)', 'Mathematics (數學)']
                 }
-            },
-            {
-                id: 'diligent_potential',
-                title: 'Diligent & Potential',
-                subtitle: 'Good Potential / 勤奮潛質型',
-                icon: '📈',
-                template: '{Name} is a {adj1} student of {adj2} potential. {He} should continue to {phrase} for improvement.',
-                pools: {
-                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)'],
-                    adj2: ['above-average (高於平均的)', 'good (良好的)', 'promising (有前途的)', 'great (巨大的)'],
-                    phrase: ['work hard (努力工作)', 'strive for excellence (追求卓越)', 'maintain his efforts (保持努力)', 'read more broadly (廣泛閱讀)']
-                }
-            },
-            {
-                id: 'polite_unfocused',
-                title: 'Polite but Unfocused',
-                subtitle: 'Needs Concentration / 有禮欠專注',
-                icon: '🧘',
-                template: '{Name} is {adj1} and {adj2} student. {He} could show more {noun} in {his} weak subjects, better results are expected.',
-                pools: {
-                    adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
-                    adj2: ['obedient (聽話的)', 'well-behaved (行為良好的)', 'respectful (尊重的)', 'quiet (安靜的)'],
-                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)']
-                }
             }
         ];
 
-        // --- UI FUNCTIONS ---
+        // --- GLOBAL STATE ---
+        let currentVibe = null;
+        let selections = {};
+        let activeSegments = {}; // Tracks which segments are checked
+        let currentCategory = 'all';
+
+        // --- FUNCTIONS ---
+
+        function init() {
+            filterVibes('all');
+        }
 
         function toggleInstructions() {
             const el = document.getElementById('instructions');
             el.classList.toggle('open');
         }
 
-        // --- NAME FORMATTING LOGIC ---
-        
         function toTitleCase(str) {
             if (!str) return "";
-            return str.toLowerCase().split(' ').map(function(word) {
-                return word.charAt(0).toUpperCase() + word.slice(1);
-            }).join(' ');
+            return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         }
 
         function autoFormatNameInput() {
@@ -395,21 +481,28 @@
             updatePreview();
         }
 
-        // --- STATE MANAGEMENT ---
-        let currentVibe = null;
-        let selections = {};
+        // --- STEP 2: CATEGORY FILTERING ---
 
-        // --- INITIALIZATION ---
-        function init() {
-            renderVibeCards();
-            updatePreview();
-        }
+        function filterVibes(category) {
+            currentCategory = category;
+            
+            // Update tabs UI
+            document.querySelectorAll('.category-tab').forEach(btn => {
+                if (btn.id === `tab-${category}`) {
+                    btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-md');
+                    btn.classList.remove('bg-slate-100', 'text-slate-600');
+                } else {
+                    btn.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-md');
+                    btn.classList.add('bg-slate-100', 'text-slate-600');
+                }
+            });
 
-        function renderVibeCards() {
             const container = document.getElementById('vibeContainer');
             container.innerHTML = '';
             
-            vibes.forEach(vibe => {
+            const filtered = category === 'all' ? vibes : vibes.filter(v => v.category === category);
+            
+            filtered.forEach(vibe => {
                 const card = document.createElement('div');
                 card.className = `vibe-card bg-white border border-slate-200 rounded-xl p-5 flex items-start gap-4 select-none`;
                 card.onclick = () => selectVibe(vibe.id, card);
@@ -425,17 +518,24 @@
             });
         }
 
-        // --- LOGIC ---
-        
+        // --- STEP 3: SELECTION & CUSTOMIZATION ---
+
         function selectVibe(vibeId, cardElement) {
             currentVibe = vibes.find(v => v.id === vibeId);
             
-            // UI Updates for Cards
+            // Highlight Card
             document.querySelectorAll('.vibe-card').forEach(c => c.classList.remove('active'));
             cardElement.classList.add('active');
             
-            // Set Defaults
+            // Reset State
             selections = {};
+            activeSegments = {};
+            
+            // Initialize Defaults
+            currentVibe.segments.forEach(seg => {
+                activeSegments[seg.id] = true; // All enabled by default
+            });
+
             Object.keys(currentVibe.pools).forEach(key => {
                 if (key === 'role') {
                     const roleOptions = getRoleOptions();
@@ -445,10 +545,9 @@
                 }
             });
             
-            renderWordPools();
+            renderSegments();
             document.getElementById('customizationSection').classList.remove('hidden');
             
-            // Mobile Scroll
             if(window.innerWidth < 768) {
                 document.getElementById('customizationSection').scrollIntoView({behavior: 'smooth', block: 'start'});
             }
@@ -459,7 +558,6 @@
         function getRoleOptions() {
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const originalRoles = currentVibe.pools.role || [];
-            
             return originalRoles.filter(r => {
                 if (r.includes('Class Monitor')) return gender === 'M';
                 if (r.includes('Class Monitress')) return gender === 'F';
@@ -469,7 +567,7 @@
 
         function handleGenderChange() {
             if (currentVibe && currentVibe.id === 'leader') {
-                renderWordPools();
+                renderSegments(); 
                 const availableRoles = getRoleOptions().map(r => r.split(' (')[0]);
                 if (!availableRoles.includes(selections.role)) {
                    selections.role = availableRoles[0];
@@ -478,85 +576,133 @@
             updatePreview();
         }
 
-        function renderWordPools() {
-            const container = document.getElementById('wordPools');
+        // --- RENDERING SEGMENTS & WORD POOLS ---
+
+        function renderSegments() {
+            const container = document.getElementById('segmentContainer');
             container.innerHTML = '';
-            
-            Object.keys(currentVibe.pools).forEach(key => {
-                const wrapper = document.createElement('div');
-                wrapper.className = "border-b border-slate-100 pb-6 last:border-0 last:pb-0";
+
+            currentVibe.segments.forEach((seg, index) => {
+                // Outer Card for Segment
+                const segCard = document.createElement('div');
+                segCard.className = "bg-slate-50 border border-slate-200 rounded-xl p-5 transition-all";
+                if (!activeSegments[seg.id]) segCard.classList.add('opacity-50');
+
+                // Header with Checkbox
+                const header = document.createElement('div');
+                header.className = "flex items-center gap-3 mb-4";
                 
-                const label = document.createElement('h4');
-                label.className = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-4";
-                label.innerText = formatLabel(key);
-                
-                const chipsContainer = document.createElement('div');
-                chipsContainer.className = "flex flex-wrap gap-3";
-                
-                let poolToRender = currentVibe.pools[key];
-                if (key === 'role') {
-                    poolToRender = getRoleOptions();
+                const checkboxId = `cb-${seg.id}`;
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = checkboxId;
+                checkbox.checked = activeSegments[seg.id];
+                checkbox.className = "w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer";
+                checkbox.onchange = (e) => {
+                    activeSegments[seg.id] = e.target.checked;
+                    renderSegments(); // Re-render to update opacity
+                    updatePreview();
+                };
+
+                const label = document.createElement('label');
+                label.htmlFor = checkboxId;
+                label.className = "font-bold text-slate-700 cursor-pointer select-none";
+                label.textContent = `Sentence ${index + 1}`;
+
+                header.appendChild(checkbox);
+                header.appendChild(label);
+                segCard.appendChild(header);
+
+                // Word Pools (only if segment has placeholders)
+                if (seg.placeholders.length > 0) {
+                    const poolContainer = document.createElement('div');
+                    poolContainer.className = activeSegments[seg.id] ? "space-y-4 pl-8" : "hidden"; // Hide pools if unchecked
+
+                    seg.placeholders.forEach(key => {
+                        const poolWrapper = document.createElement('div');
+                        
+                        const poolLabel = document.createElement('p');
+                        poolLabel.className = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-2";
+                        poolLabel.textContent = formatLabel(key);
+                        
+                        const chips = document.createElement('div');
+                        chips.className = "flex flex-wrap gap-2";
+
+                        let poolToRender = currentVibe.pools[key];
+                        if (key === 'role') poolToRender = getRoleOptions();
+
+                        poolToRender.forEach(item => {
+                            const parts = item.match(/^(.*?) \((.*?)\)$/);
+                            const english = parts ? parts[1] : item;
+                            const chinese = parts ? parts[2] : '';
+                            const isSelected = selections[key] === english;
+
+                            const chip = document.createElement('button');
+                            chip.className = `word-chip px-3 py-2 rounded-lg border text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300'}`;
+                            chip.onclick = () => {
+                                selections[key] = english;
+                                renderSegments();
+                                updatePreview();
+                            };
+                            chip.innerHTML = `
+                                <span class="font-semibold">${english}</span>
+                                ${chinese ? `<span class="text-[10px] opacity-80 font-normal mt-0.5">${chinese}</span>` : ''}
+                            `;
+                            chips.appendChild(chip);
+                        });
+
+                        poolWrapper.appendChild(poolLabel);
+                        poolWrapper.appendChild(chips);
+                        poolContainer.appendChild(poolWrapper);
+                    });
+                    segCard.appendChild(poolContainer);
                 }
 
-                poolToRender.forEach(item => {
-                    const parts = item.match(/^(.*?) \((.*?)\)$/);
-                    const english = parts ? parts[1] : item;
-                    const chinese = parts ? parts[2] : '';
-                    
-                    const chip = document.createElement('button');
-                    const isSelected = selections[key] === english;
-                    
-                    chip.className = `word-chip px-5 py-3 rounded-xl border-2 text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-300'}`;
-                    chip.onclick = () => {
-                        selections[key] = english;
-                        renderWordPools(); 
-                        updatePreview();
-                    };
-                    
-                    chip.innerHTML = `
-                        <span class="font-bold text-base md:text-lg">${english}</span>
-                        ${chinese ? `<span class="text-xs opacity-80 font-normal mt-0.5">${chinese}</span>` : ''}
-                    `;
-                    chipsContainer.appendChild(chip);
-                });
-                
-                wrapper.appendChild(label);
-                wrapper.appendChild(chipsContainer);
-                container.appendChild(wrapper);
+                container.appendChild(segCard);
             });
         }
-        
+
         function formatLabel(key) {
-            if (key.startsWith('adj')) return 'Adjective / Description';
+            if (key.startsWith('adj')) return 'Adjective';
             if (key === 'adv') return 'Adverb';
             if (key.startsWith('noun')) return 'Noun / Quality';
             if (key === 'verb') return 'Verb';
-            if (key === 'phrase') return 'Suggestion / Phrase';
+            if (key === 'phrase') return 'Phrase';
             if (key === 'role') return 'Role / Duty';
-            if (key === 'subject') return 'Subject / Area';
+            if (key === 'subject') return 'Subject';
             return key;
         }
+
+        // --- PREVIEW LOGIC ---
 
         function updatePreview() {
             const nameInput = document.getElementById('studentName');
             const rawName = nameInput.value.trim();
-            // Auto-format name logic for Preview
             const formattedName = rawName ? toTitleCase(rawName) : "[Student Name]";
             
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const previewBox = document.getElementById('previewText');
             
             if (!currentVibe) {
-                previewBox.innerHTML = '<span class="text-slate-400 italic">Select a vibe from Step 2 above to generate a comment.</span>';
+                previewBox.innerHTML = '<span class="text-slate-400 italic">Select a vibe above...</span>';
                 return;
             }
 
-            let text = currentVibe.template;
             const pronouns = gender === 'M' 
                 ? { sub: 'He', obj: 'him', poss: 'his' }
                 : { sub: 'She', obj: 'her', poss: 'her' };
+
+            // Construct Text from Enabled Segments
+            let fullText = "";
             
-            // Gender Replacement
+            currentVibe.segments.forEach(seg => {
+                if (activeSegments[seg.id]) {
+                    fullText += seg.text + " ";
+                }
+            });
+
+            // Replacements
+            let text = fullText.trim();
             text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${formattedName}</span>`);
             text = text.replace(/{He}/g, pronouns.sub);
             text = text.replace(/{he}/g, pronouns.sub.toLowerCase());
@@ -565,16 +711,16 @@
             text = text.replace(/{Him}/g, pronouns.obj.charAt(0).toUpperCase() + pronouns.obj.slice(1));
             text = text.replace(/{him}/g, pronouns.obj);
 
-            // Word Selection Replacement
             Object.keys(selections).forEach(key => {
                 const word = selections[key];
                 const regex = new RegExp(`{${key}}`, 'g');
                 text = text.replace(regex, `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded border border-blue-100">${word}</span>`);
             });
 
+            if (text === "") text = '<span class="text-slate-400 italic">No sentences selected. Check a box above.</span>';
+
             previewBox.innerHTML = text;
             
-            // Count words (strip HTML)
             const plainText = previewBox.innerText;
             const count = plainText.trim().split(/\s+/).filter(w => w.length > 0).length;
             document.getElementById('wordCount').innerText = `${count} words`;
