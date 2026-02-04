@@ -3,99 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v5</title>
+    <title>HK Report Card Generator v6</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     <!-- Favicon SVG -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; scroll-behavior: smooth; }
-        .vibe-card { transition: all 0.2s ease; cursor: pointer; }
-        .vibe-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .vibe-card.active { border-color: #2563eb; background-color: #eff6ff; ring: 2px solid #2563eb; }
+        body { 
+            font-family: 'Noto Sans', sans-serif; 
+            background: #f0f4f8;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
         
-        .word-chip { transition: all 0.1s ease; cursor: pointer; user-select: none; }
-        .word-chip:hover { transform: translateY(-1px); border-color: #60a5fa; }
-        .word-chip.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-radius: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .vibe-card { 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: pointer; 
+            position: relative;
+            overflow: hidden;
+        }
+        .vibe-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 20px -5px rgba(59, 130, 246, 0.15); 
+            border-color: #93c5fd;
+        }
+        .vibe-card.active { 
+            border-color: #3b82f6; 
+            background-color: #eff6ff; 
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
         
-        .step-badge { width: 24px; height: 24px; border-radius: 50%; background: #dbeafe; color: #1e40af; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        /* Larger Chips */
+        .word-chip { 
+            transition: all 0.15s ease; 
+            cursor: pointer; 
+            user-select: none;
+            font-size: 1rem; /* Increased size */
+        }
+        .word-chip:hover { 
+            transform: translateY(-1px); 
+            background-color: #f1f5f9;
+            border-color: #64748b;
+        }
+        .word-chip.active { 
+            background-color: #2563eb; 
+            color: white; 
+            border-color: #2563eb; 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .word-chip.active:hover {
+            background-color: #1d4ed8;
+        }
         
-        /* Smooth fade in */
-        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .step-badge { 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 8px; 
+            background: #dbeafe; 
+            color: #1e40af; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px; 
+            font-weight: 800; 
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+        }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Smooth reveal for instructions */
+        .reveal-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out;
+            opacity: 0;
+        }
+        .reveal-content.open {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            margin-bottom: 2rem;
+        }
+        .inner-content { overflow: hidden; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 pb-40">
+<body class="pb-48">
 
     <!-- Navbar -->
-    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <!-- SVG Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                </svg>
+                <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                    </svg>
+                </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight">Report Card Generator</h1>
-                    <p class="text-blue-200 text-xs hidden sm:block">For Hong Kong Teachers | v5.0</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v6</span></h1>
                 </div>
             </div>
-            <a href="#instructions" class="text-sm bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-md transition-colors">How to Use?</a>
+            <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                How to Use?
+            </button>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-8">
+    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- INSTRUCTIONS -->
-        <div id="instructions" class="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-xl p-6 shadow-sm">
-            <h2 class="text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                How to use this system
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
-                <div class="flex gap-3">
-                    <div class="step-badge shrink-0">1</div>
-                    <p><strong class="text-slate-800">Input Profile:</strong> Enter the student's name and select gender. The system automatically handles all "He/She/His/Her" grammar.</p>
-                </div>
-                <div class="flex gap-3">
-                    <div class="step-badge shrink-0">2</div>
-                    <p><strong class="text-slate-800">Select Vibe:</strong> Choose the category that best fits the student (e.g., "Smart but Passive").</p>
-                </div>
-                <div class="flex gap-3">
-                    <div class="step-badge shrink-0">3</div>
-                    <p><strong class="text-slate-800">Customize & Copy:</strong> Click the word chips to adjust adjectives. The preview updates instantly. Click "Copy" to finish.</p>
+        <!-- TOGGLEABLE INSTRUCTIONS -->
+        <div id="instructions" class="reveal-content glass-card border-l-4 border-l-blue-500">
+            <div class="inner-content p-6">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">Quick Guide</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-600">
+                    <div class="flex gap-3">
+                        <div class="step-badge shrink-0">1</div>
+                        <div>
+                            <p class="font-bold text-slate-800 mb-1">Input Profile</p>
+                            <p>Enter name and gender. Names are auto-capitalized (e.g., "tai man" → "Tai Man").</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="step-badge shrink-0">2</div>
+                        <div>
+                            <p class="font-bold text-slate-800 mb-1">Select Vibe</p>
+                            <p>Choose from 10 student profiles below that best match your student.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="step-badge shrink-0">3</div>
+                        <div>
+                            <p class="font-bold text-slate-800 mb-1">Customize</p>
+                            <p>Click the large word chips to adjust the tone, then copy the result.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- SECTION 1: Student Details -->
-        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-10 -mt-10 z-0"></div>
-            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2 relative z-10">
+        <section class="glass-card p-8">
+            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
                 <span class="step-badge">1</span> Student Details
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Name</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Student Name</label>
                     <input type="text" id="studentName" placeholder="e.g. Chan Tai Man" 
-                        class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm"
-                        oninput="updatePreview()">
+                        class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-lg placeholder-slate-300"
+                        oninput="updatePreview()" onblur="autoFormatNameInput()">
+                    <p class="text-[10px] text-slate-400 mt-1 pl-1">Auto-converts to Title Case</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Gender</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Gender</label>
                     <div class="flex gap-4">
                         <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="M" checked class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer bg-white group-hover:border-blue-300 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all shadow-sm">
-                                👦 Male (He/His)
+                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer bg-slate-50 hover:border-blue-200 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all">
+                                <span class="text-xl">👦</span> <span class="font-bold">Male</span>
                             </div>
                         </label>
                         <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="F" class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer bg-white group-hover:border-pink-300 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all shadow-sm">
-                                👧 Female (She/Her)
+                            <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer bg-slate-50 hover:border-pink-200 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all">
+                                <span class="text-xl">👧</span> <span class="font-bold">Female</span>
                             </div>
                         </label>
                     </div>
@@ -104,43 +187,41 @@
         </section>
 
         <!-- SECTION 2: Select Vibe -->
-        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <span class="step-badge">2</span> Select Student "Vibe"
+        <section class="glass-card p-8">
+            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
+                <span class="step-badge">2</span> Select Student Profile
             </h2>
-            <p class="text-xs text-slate-500 mb-4">Choose from 10 distinct student profiles:</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4" id="vibeContainer">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" id="vibeContainer">
                 <!-- Vibe Cards generated by JS -->
             </div>
         </section>
 
         <!-- SECTION 3: Customize Words -->
-        <section id="customizationSection" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hidden fade-in">
-            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+        <section id="customizationSection" class="glass-card p-8 hidden fade-in">
+            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
                 <span class="step-badge">3</span> Customize Vocabulary
             </h2>
-            <div id="wordPools" class="space-y-6">
+            <div id="wordPools" class="space-y-8">
                 <!-- Dynamic Word Pools generated by JS -->
             </div>
-            <div class="h-12"></div>
         </section>
 
     </main>
 
     <!-- SECTION 4: Sticky Footer Preview -->
-    <footer class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40 transition-all">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+    <footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-white/50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40 transition-all">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
             <div class="flex-1 w-full">
-                <div class="flex justify-between items-end mb-1">
-                     <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Preview</p>
-                     <span id="wordCount" class="text-[10px] text-slate-400">0 words</span>
+                <div class="flex justify-between items-end mb-2">
+                     <p class="text-xs text-blue-600 font-bold uppercase tracking-wider">Live Preview</p>
+                     <span id="wordCount" class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">0 words</span>
                 </div>
-                <div id="previewText" class="text-lg font-serif text-slate-800 leading-relaxed min-h-[3rem] p-3 bg-slate-50/50 rounded-lg border border-slate-200/60 hover:bg-white transition-colors">
-                    Select a vibe to begin...
+                <div id="previewText" class="text-xl font-serif text-slate-800 leading-relaxed min-h-[3.5rem] p-4 bg-white rounded-xl border border-slate-200 shadow-sm transition-colors">
+                    Select a vibe above to generate...
                 </div>
             </div>
             <div class="shrink-0 w-full md:w-auto self-center md:self-auto">
-                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 active:scale-95 active:shadow-none">
+                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 active:shadow-none hover:-translate-y-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
@@ -151,20 +232,19 @@
     </footer>
 
     <!-- Success Toast -->
-    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-3 translate-y-4">
+    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-8 py-4 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-3 translate-y-4 font-medium">
         <div class="bg-green-500 rounded-full p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
             </svg>
         </div>
-        <span class="font-medium">Copied to clipboard!</span>
+        <span>Copied to clipboard!</span>
     </div>
 
     <script>
-        // --- DATA STRUCTURES (EXPANDED TO 10 VIBES) ---
+        // --- DATA STRUCTURES ---
         
         const vibes = [
-            // --- ORIGINAL 5 ---
             {
                 id: 'allrounder',
                 title: 'All-Rounder',
@@ -231,8 +311,6 @@
                     noun: ['motivation (動力)', 'academic focus (學業專注)', 'attentiveness (專注力)']
                 }
             },
-
-            // --- NEW 5 VIBES (BASED ON YOUR ANALYSIS) ---
             {
                 id: 'sincere_careless',
                 title: 'Friendly but Careless',
@@ -254,12 +332,7 @@
                 pools: {
                     adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
                     noun1: ['strong determination (強大的決心)', 'motivation (動力)', 'initiative (主動性)', 'drive (幹勁)'],
-                    phrase: [
-                        'working harder (更努力工作)', 
-                        'taking an active role in learning (積極參與學習)', 
-                        'being more proactive (更加主動)',
-                        'setting higher goals (設定更高目標)'
-                    ]
+                    phrase: ['working harder (更努力工作)', 'taking an active role in learning (積極參與學習)', 'being more proactive (更加主動)', 'setting higher goals (設定更高目標)']
                 }
             },
             {
@@ -300,6 +373,28 @@
             }
         ];
 
+        // --- UI FUNCTIONS ---
+
+        function toggleInstructions() {
+            const el = document.getElementById('instructions');
+            el.classList.toggle('open');
+        }
+
+        // --- NAME FORMATTING LOGIC ---
+        
+        function toTitleCase(str) {
+            if (!str) return "";
+            return str.toLowerCase().split(' ').map(function(word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }).join(' ');
+        }
+
+        function autoFormatNameInput() {
+            const input = document.getElementById('studentName');
+            input.value = toTitleCase(input.value);
+            updatePreview();
+        }
+
         // --- STATE MANAGEMENT ---
         let currentVibe = null;
         let selections = {};
@@ -316,14 +411,14 @@
             
             vibes.forEach(vibe => {
                 const card = document.createElement('div');
-                card.className = `vibe-card border-2 border-slate-200 rounded-xl p-4 bg-white flex items-start gap-3 select-none`;
+                card.className = `vibe-card bg-white border border-slate-200 rounded-xl p-5 flex items-start gap-4 select-none`;
                 card.onclick = () => selectVibe(vibe.id, card);
                 
                 card.innerHTML = `
-                    <div class="text-3xl bg-slate-50 p-2 rounded-lg shrink-0">${vibe.icon}</div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm md:text-base">${vibe.title}</h3>
-                        <p class="text-xs text-slate-500 font-medium mt-1">${vibe.subtitle}</p>
+                    <div class="text-4xl bg-slate-50 p-3 rounded-2xl shrink-0 shadow-sm">${vibe.icon}</div>
+                    <div class="pt-1">
+                        <h3 class="font-bold text-slate-800 text-lg leading-tight">${vibe.title}</h3>
+                        <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wide">${vibe.subtitle}</p>
                     </div>
                 `;
                 container.appendChild(card);
@@ -375,7 +470,6 @@
         function handleGenderChange() {
             if (currentVibe && currentVibe.id === 'leader') {
                 renderWordPools();
-                // Reset role if invalid for gender
                 const availableRoles = getRoleOptions().map(r => r.split(' (')[0]);
                 if (!availableRoles.includes(selections.role)) {
                    selections.role = availableRoles[0];
@@ -390,14 +484,14 @@
             
             Object.keys(currentVibe.pools).forEach(key => {
                 const wrapper = document.createElement('div');
-                wrapper.className = "border-b border-slate-100 pb-4 last:border-0 last:pb-0";
+                wrapper.className = "border-b border-slate-100 pb-6 last:border-0 last:pb-0";
                 
                 const label = document.createElement('h4');
-                label.className = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-3";
+                label.className = "text-xs font-bold text-slate-400 uppercase tracking-widest mb-4";
                 label.innerText = formatLabel(key);
                 
                 const chipsContainer = document.createElement('div');
-                chipsContainer.className = "flex flex-wrap gap-2";
+                chipsContainer.className = "flex flex-wrap gap-3";
                 
                 let poolToRender = currentVibe.pools[key];
                 if (key === 'role') {
@@ -412,7 +506,7 @@
                     const chip = document.createElement('button');
                     const isSelected = selections[key] === english;
                     
-                    chip.className = `word-chip px-3 py-2 rounded-lg border text-sm text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-300'}`;
+                    chip.className = `word-chip px-5 py-3 rounded-xl border-2 text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-300'}`;
                     chip.onclick = () => {
                         selections[key] = english;
                         renderWordPools(); 
@@ -420,8 +514,8 @@
                     };
                     
                     chip.innerHTML = `
-                        <span class="font-medium">${english}</span>
-                        ${chinese ? `<span class="text-[10px] opacity-70 font-normal mt-0.5">${chinese}</span>` : ''}
+                        <span class="font-bold text-base md:text-lg">${english}</span>
+                        ${chinese ? `<span class="text-xs opacity-80 font-normal mt-0.5">${chinese}</span>` : ''}
                     `;
                     chipsContainer.appendChild(chip);
                 });
@@ -444,8 +538,11 @@
         }
 
         function updatePreview() {
-            const nameInput = document.getElementById('studentName').value.trim();
-            const name = nameInput || "[Student Name]";
+            const nameInput = document.getElementById('studentName');
+            const rawName = nameInput.value.trim();
+            // Auto-format name logic for Preview
+            const formattedName = rawName ? toTitleCase(rawName) : "[Student Name]";
+            
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const previewBox = document.getElementById('previewText');
             
@@ -460,7 +557,7 @@
                 : { sub: 'She', obj: 'her', poss: 'her' };
             
             // Gender Replacement
-            text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${name}</span>`);
+            text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${formattedName}</span>`);
             text = text.replace(/{He}/g, pronouns.sub);
             text = text.replace(/{he}/g, pronouns.sub.toLowerCase());
             text = text.replace(/{His}/g, pronouns.poss.charAt(0).toUpperCase() + pronouns.poss.slice(1));
