@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v11</title>
+    <title>HK Report Card Generator v12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <style>
         body { 
@@ -16,7 +15,6 @@
             background-size: 24px 24px;
         }
         
-        /* Glassmorphism */
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
@@ -25,29 +23,27 @@
             border-radius: 1rem;
         }
 
-        /* Tabs in Step 2 */
+        /* Tabs */
         .sentence-tab {
             transition: all 0.2s ease;
             text-align: left;
             border: 2px solid transparent;
         }
-        .sentence-tab:hover {
-            background-color: #f1f5f9;
-        }
+        .sentence-tab:hover { background-color: #f1f5f9; }
         .sentence-tab.active {
-            background-color: #2563eb;
-            color: white;
-            border-color: #2563eb;
+            background-color: #2563eb; color: white; border-color: #2563eb;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
         .sentence-tab.active .sub-text { color: #bfdbfe; }
         .sentence-tab .sub-text { color: #94a3b8; transition: color 0.2s; }
 
-        /* Option Cards */
+        /* Option Cards - Enhanced Visibility */
         .option-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             border: 2px solid #e2e8f0;
+            display: flex; flex-direction: column; justify-content: center;
+            min-height: 100px;
         }
         .option-card:hover {
             transform: translateY(-2px);
@@ -58,23 +54,16 @@
             background-color: #eff6ff;
             box-shadow: 0 0 0 2px #2563eb;
         }
+        .option-title-zh { color: #64748b; font-weight: 500; }
+        .option-card.active .option-title-zh { color: #1e40af; }
 
         /* Word Chips */
         .word-chip { 
-            transition: all 0.15s ease; 
-            cursor: pointer; 
-            user-select: none;
-            font-size: 0.95rem;
+            transition: all 0.15s ease; cursor: pointer; user-select: none; font-size: 0.95rem;
         }
-        .word-chip:hover { 
-            transform: translateY(-1px); 
-            background-color: #f1f5f9;
-            border-color: #64748b;
-        }
+        .word-chip:hover { transform: translateY(-1px); background-color: #f1f5f9; border-color: #64748b; }
         .word-chip.active { 
-            background-color: #2563eb; 
-            color: white; 
-            border-color: #2563eb; 
+            background-color: #2563eb; color: white; border-color: #2563eb; 
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         .word-chip.active:hover { background-color: #1d4ed8; }
@@ -87,8 +76,7 @@
         }
 
         .reveal-content {
-            display: grid; grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s ease-out; opacity: 0;
+            display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; opacity: 0;
         }
         .reveal-content.open { grid-template-rows: 1fr; opacity: 1; margin-bottom: 1.5rem; }
         .inner-content { overflow: hidden; }
@@ -103,12 +91,17 @@
                 <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v11</span></h1>
+                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v12</span></h1>
             </div>
-            <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                How to Use?
-            </button>
+            <div class="flex gap-3">
+                <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span data-i18n="howToUse">How to Use?</span>
+                </button>
+                <button onclick="toggleLanguage()" id="langBtn" class="text-sm font-bold bg-white border border-slate-300 hover:border-blue-500 text-slate-700 px-4 py-2 rounded-lg transition-colors shadow-sm">
+                    🌐 中 / En
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -117,19 +110,19 @@
         <!-- INSTRUCTIONS -->
         <div id="instructions" class="reveal-content glass-card border-l-4 border-l-blue-500">
             <div class="inner-content p-6">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">How to Use</h2>
+                <h2 class="text-lg font-bold text-slate-800 mb-4" data-i18n="guideTitle">How to Use</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-600">
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">1</div>
-                        <div><p class="font-bold text-slate-800">Student Info</p><p>Enter name and gender.</p></div>
+                        <div><p class="font-bold text-slate-800" data-i18n="step1Title">Student Info</p><p data-i18n="step1Desc">Enter name and gender.</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">2</div>
-                        <div><p class="font-bold text-slate-800">Select Sentences</p><p>Click "Sentence 1", "Sentence 2", or "Sentence 3" tabs, then choose a style for that part.</p></div>
+                        <div><p class="font-bold text-slate-800" data-i18n="step2Title">Select Sentences</p><p data-i18n="step2Desc">Click Tabs, then choose a style.</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">3</div>
-                        <div><p class="font-bold text-slate-800">Customize</p><p>Use the generated word chips at the bottom to refine the comment.</p></div>
+                        <div><p class="font-bold text-slate-800" data-i18n="step3Title">Customize</p><p data-i18n="step3Desc">Refine with word chips below.</p></div>
                     </div>
                 </div>
             </div>
@@ -138,28 +131,28 @@
         <!-- STEP 1 -->
         <section class="glass-card p-6 md:p-8">
             <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
-                <span class="step-badge">1</span> Student Details
+                <span class="step-badge">1</span> <span data-i18n="sec1Title">Student Details</span>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Student Name</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2" data-i18n="lblStudentName">Student Name</label>
                     <input type="text" id="studentName" placeholder="e.g. Chan Tai Man" 
                         class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-lg placeholder-slate-300"
                         oninput="updatePreview()" onblur="autoFormatNameInput()">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Gender</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2" data-i18n="lblGender">Gender</label>
                     <div class="flex gap-4">
                         <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="M" checked class="peer sr-only" onchange="updatePreview()">
                             <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer hover:border-blue-200 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all">
-                                <span class="text-xl">👦</span> <span class="font-bold">Male</span>
+                                <span class="text-xl">👦</span> <span class="font-bold" data-i18n="male">Male</span>
                             </div>
                         </label>
                         <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="F" class="peer sr-only" onchange="updatePreview()">
                             <div class="p-4 flex items-center justify-center gap-2 border-2 border-slate-100 rounded-xl cursor-pointer hover:border-pink-200 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all">
-                                <span class="text-xl">👧</span> <span class="font-bold">Female</span>
+                                <span class="text-xl">👧</span> <span class="font-bold" data-i18n="female">Female</span>
                             </div>
                         </label>
                     </div>
@@ -170,22 +163,22 @@
         <!-- STEP 2: TABBED SENTENCE BUILDER -->
         <section class="glass-card p-6 md:p-8">
             <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-3">
-                <span class="step-badge">2</span> Build Comment Structure
+                <span class="step-badge">2</span> <span data-i18n="sec2Title">Build Comment Structure</span>
             </h2>
             
             <!-- TABS -->
             <div class="grid grid-cols-3 gap-2 md:gap-4 mb-6">
                 <button onclick="switchTab('s1')" id="tab-s1" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start active">
-                    <span class="font-bold text-sm md:text-base">Sentence 1</span>
-                    <span class="sub-text text-xs mt-1">Opening (Personality)</span>
+                    <span class="font-bold text-sm md:text-xl" data-i18n="tabS1">Sentence 1</span>
+                    <span class="sub-text text-xs mt-1" data-i18n="tabS1Sub">Opening (Personality)</span>
                 </button>
                 <button onclick="switchTab('s2')" id="tab-s2" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start bg-slate-50 text-slate-600">
-                    <span class="font-bold text-sm md:text-base">Sentence 2</span>
-                    <span class="sub-text text-xs mt-1">Body (Performance)</span>
+                    <span class="font-bold text-sm md:text-xl" data-i18n="tabS2">Sentence 2</span>
+                    <span class="sub-text text-xs mt-1" data-i18n="tabS2Sub">Body (Performance)</span>
                 </button>
                 <button onclick="switchTab('s3')" id="tab-s3" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start bg-slate-50 text-slate-600">
-                    <span class="font-bold text-sm md:text-base">Sentence 3</span>
-                    <span class="sub-text text-xs mt-1">Closing (Advice)</span>
+                    <span class="font-bold text-sm md:text-xl" data-i18n="tabS3">Sentence 3</span>
+                    <span class="sub-text text-xs mt-1" data-i18n="tabS3Sub">Closing (Advice)</span>
                 </button>
             </div>
 
@@ -195,7 +188,7 @@
                 <!-- Toggle Checkbox -->
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
                     <input type="checkbox" id="segmentEnabled" checked onchange="toggleCurrentSegment()" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer">
-                    <label for="segmentEnabled" class="font-bold text-slate-700 cursor-pointer select-none">Include this sentence in report card</label>
+                    <label for="segmentEnabled" class="font-bold text-slate-700 cursor-pointer select-none" data-i18n="chkInclude">Include this sentence in report card</label>
                 </div>
 
                 <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -207,7 +200,7 @@
         <!-- STEP 3 -->
         <section id="customizationSection" class="glass-card p-6 md:p-8 hidden">
             <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-3">
-                <span class="step-badge">3</span> Fill in the Blanks
+                <span class="step-badge">3</span> <span data-i18n="sec3Title">Fill in the Blanks</span>
             </h2>
             <div id="wordPools" class="space-y-8">
                 <!-- Dynamic Pools -->
@@ -221,7 +214,7 @@
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
             <div class="flex-1 w-full">
                 <div class="flex justify-between items-end mb-2">
-                     <p class="text-xs text-blue-600 font-bold uppercase tracking-wider">Live Preview</p>
+                     <p class="text-xs text-blue-600 font-bold uppercase tracking-wider" data-i18n="previewLbl">Live Preview</p>
                      <span id="wordCount" class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded">0 words</span>
                 </div>
                 <div id="previewText" class="text-xl font-serif text-slate-800 leading-relaxed min-h-[3.5rem] p-4 bg-white rounded-xl border border-slate-200 shadow-sm transition-colors">
@@ -233,7 +226,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
-                    Copy
+                    <span data-i18n="btnCopy">Copy</span>
                 </button>
             </div>
         </div>
@@ -246,33 +239,73 @@
     </div>
 
     <script>
-        // --- DATA CONFIGURATION ---
+        // --- TRANSLATIONS ---
+        const i18n = {
+            en: {
+                howToUse: "How to Use?",
+                guideTitle: "How to Use",
+                step1Title: "Student Info", step1Desc: "Enter name and gender.",
+                step2Title: "Select Sentences", step2Desc: "Click Tabs, then choose a style.",
+                step3Title: "Customize", step3Desc: "Refine with word chips below.",
+                sec1Title: "Student Details",
+                lblStudentName: "Student Name", lblGender: "Gender", male: "Male", female: "Female",
+                sec2Title: "Build Comment Structure",
+                tabS1: "Sentence 1", tabS1Sub: "Opening (Personality)",
+                tabS2: "Sentence 2", tabS2Sub: "Body (Performance)",
+                tabS3: "Sentence 3", tabS3Sub: "Closing (Advice)",
+                chkInclude: "Include this sentence in report card",
+                sec3Title: "Fill in the Blanks",
+                previewLbl: "Live Preview", btnCopy: "Copy",
+                disabledMsg: "This sentence is currently disabled. Check the box above to enable options."
+            },
+            zh: {
+                howToUse: "使用說明",
+                guideTitle: "使用指南",
+                step1Title: "學生資料", step1Desc: "輸入姓名及性別。",
+                step2Title: "選擇句式", step2Desc: "點擊標籤，然後選擇風格。",
+                step3Title: "自訂內容", step3Desc: "使用下方的詞彙進行微調。",
+                sec1Title: "學生資料",
+                lblStudentName: "學生姓名", lblGender: "性別", male: "男", female: "女",
+                sec2Title: "建立評語結構",
+                tabS1: "第一句", tabS1Sub: "開首 (性格)",
+                tabS2: "第二句", tabS2Sub: "主體 (表現)",
+                tabS3: "第三句", tabS3Sub: "總結 (建議)",
+                chkInclude: "在評語中包含此句子",
+                sec3Title: "填充詞彙",
+                previewLbl: "實時預覽", btnCopy: "複製",
+                disabledMsg: "此句子已停用。請勾選上方方格以啟用選項。"
+            }
+        };
+
+        let currentLang = 'en';
+
+        // --- DATA CONFIGURATION (BILINGUAL TITLES) ---
         
         const openings = [
-            { id: 'op1', title: 'High Achiever', template: '{Name} is a {adj1} student with {adj2} potential.', pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }},
-            { id: 'op2', title: 'Quiet/Polite', template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', pools: { adj1: ['gentle (溫和的)','quiet (安靜的)','calm (冷靜的)'], adj2: ['polite (有禮貌的)','obedient (聽話的)','courteous (謙恭的)'] }},
-            { id: 'op3', title: 'Social/Active', template: '{Name} is a very {adj1} and {adj2} student.', pools: { adj1: ['energetic (充滿活力的)','outgoing (外向的)','cheerful (開朗的)'], adj2: ['sociable (善於社交的)','positive (正面的)','optimistic (樂觀的)'] }},
-            { id: 'op4', title: 'Leader/Helper', template: '{Name} is a {adj1} and {adj2} student who gets along well with others.', pools: { adj1: ['helpful (樂於助人的)','friendly (友善的)'], adj2: ['responsible (負責任的)','trustworthy (值得信賴的)'] }},
-            { id: 'op5', title: 'Distracted', template: '{Name} is an {adj1} learner with good potential.', pools: { adj1: ['active (活躍的)','intelligent (聰穎的)','agile (思維敏捷的)'] }},
-            { id: 'op6', title: 'Passive', template: '{Name} is a {adj1} student but {he} lacks {noun1}.', pools: { adj1: ['smart (聰明的)','capable (有能力的)'], noun1: ['initiative (主動性)','drive (幹勁)','confidence (自信)'] }}
+            { id: 'op1', title: 'High Achiever', titleZH: '全能型 (優異生)', template: '{Name} is a {adj1} student with {adj2} potential.', pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }},
+            { id: 'op2', title: 'Quiet & Polite', titleZH: '文靜勤奮型', template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', pools: { adj1: ['gentle (溫和的)','quiet (安靜的)','calm (冷靜的)'], adj2: ['polite (有禮貌的)','obedient (聽話的)','courteous (謙恭的)'] }},
+            { id: 'op3', title: 'Social & Active', titleZH: '社交活躍型', template: '{Name} is a very {adj1} and {adj2} student.', pools: { adj1: ['energetic (充滿活力的)','outgoing (外向的)','cheerful (開朗的)'], adj2: ['sociable (善於社交的)','positive (正面的)','optimistic (樂觀的)'] }},
+            { id: 'op4', title: 'Leader / Helper', titleZH: '樂於助人 / 領袖型', template: '{Name} is a {adj1} and {adj2} student who gets along well with others.', pools: { adj1: ['helpful (樂於助人的)','friendly (友善的)'], adj2: ['responsible (負責任的)','trustworthy (值得信賴的)'] }},
+            { id: 'op5', title: 'Distracted', titleZH: '有能力但分心型', template: '{Name} is an {adj1} learner with good potential.', pools: { adj1: ['active (活躍的)','intelligent (聰穎的)','agile (思維敏捷的)'] }},
+            { id: 'op6', title: 'Smart but Passive', titleZH: '聰明但被動型', template: '{Name} is a {adj1} student but {he} lacks {noun1}.', pools: { adj1: ['smart (聰明的)','capable (有能力的)'], noun1: ['initiative (主動性)','drive (幹勁)','confidence (自信)'] }}
         ];
 
         const bodies = [
-            { id: 'bd1', title: 'Strong Work Ethic', template: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', pools: { adv: ['steadily (穩定地)','diligently (勤奮地)','consistently (一貫地)'], noun: ['responsibility (責任感)','perseverance (毅力)','integrity (正直)'] }},
-            { id: 'bd2', title: 'Consistent Worker', template: '{He} is a {adj} worker who always completes assignments {adv}.', pools: { adj: ['steady (穩定的)','conscientious (認真的)'], adv: ['carefully (仔細地)','punctually (準時地)','neatly (整潔地)'] }},
-            { id: 'bd3', title: 'Satisfactory Results', template: '{He} has achieved satisfactory results in most subjects.', pools: {} },
-            { id: 'bd4', title: 'Duties/Role', template: '{He} deserves credit for discharging {his} duties as {role} faithfully.', pools: { role: ['Class Monitor','Prefect','Subject Leader'] }},
-            { id: 'bd5', title: 'Distracted Behavior', template: 'However, {he} sometimes {verb} in class.', pools: { verb: ['lacks concentration (欠缺集中力)','is talkative (多言)','daydreams (發白日夢)'] }},
-            { id: 'bd6', title: 'Good Behavior', template: '{He} is attentive and shows good response in class.', pools: {} }
+            { id: 'bd1', title: 'Strong Work Ethic', titleZH: '學習態度認真', template: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', pools: { adv: ['steadily (穩定地)','diligently (勤奮地)','consistently (一貫地)'], noun: ['responsibility (責任感)','perseverance (毅力)','integrity (正直)'] }},
+            { id: 'bd2', title: 'Consistent Worker', titleZH: '表現穩定', template: '{He} is a {adj} worker who always completes assignments {adv}.', pools: { adj: ['steady (穩定的)','conscientious (認真的)'], adv: ['carefully (仔細地)','punctually (準時地)','neatly (整潔地)'] }},
+            { id: 'bd3', title: 'Satisfactory Results', titleZH: '成績滿意', template: '{He} has achieved satisfactory results in most subjects.', pools: {} },
+            { id: 'bd4', title: 'Duties / Role', titleZH: '盡責服務', template: '{He} deserves credit for discharging {his} duties as {role} faithfully.', pools: { role: ['Class Monitor','Prefect','Subject Leader'] }},
+            { id: 'bd5', title: 'Distracted Behavior', titleZH: '表現分心', template: 'However, {he} sometimes {verb} in class.', pools: { verb: ['lacks concentration (欠缺集中力)','is talkative (多言)','daydreams (發白日夢)'] }},
+            { id: 'bd6', title: 'Good Behavior', titleZH: '行為良好', template: '{He} is attentive and shows good response in class.', pools: {} }
         ];
 
         const closings = [
-            { id: 'cl1', title: 'General Advice', template: '{He} should continue to {phrase} for improvement.', pools: { phrase: ['strive for excellence (追求卓越)','work hard (努力工作)','read more broadly (廣泛閱讀)'] }},
-            { id: 'cl2', title: 'Attitude Check', template: '{His} {adj} attitude is reflected in the high quality of {his} school work.', pools: { adj: ['sincere (真誠的)','positive (積極的)','serious (嚴肅的)'] }},
-            { id: 'cl3', title: 'Need Improvement', template: 'If {he} can show more {noun} in {subject}, better results are expected.', pools: { noun: ['effort (努力)','focus (專注)','determination (決心)'], subject: ['weak subjects (弱勢學科)','English (英語)','Mathematics (數學)'] }},
-            { id: 'cl4', title: 'Social Advice', template: 'Greater success is expected if {he} pays more {noun}.', pools: { noun: ['attention to details (對細節的關注)','patience (耐性)'] }},
-            { id: 'cl5', title: 'Specific Advice', template: '{He} needs greater {noun} to achieve a higher academic standard.', pools: { noun: ['motivation (動力)','self-discipline (自律)','concentration (專注力)'] }},
-            { id: 'cl6', title: 'Encouraging', template: 'With more {noun}, {he} will be able to perform even better.', pools: { noun: ['confidence (自信)','initiative (主動性)'] }}
+            { id: 'cl1', title: 'General Advice', titleZH: '一般建議', template: '{He} should continue to {phrase} for improvement.', pools: { phrase: ['strive for excellence (追求卓越)','work hard (努力工作)','read more broadly (廣泛閱讀)'] }},
+            { id: 'cl2', title: 'Attitude Check', titleZH: '學習態度', template: '{His} {adj} attitude is reflected in the high quality of {his} school work.', pools: { adj: ['sincere (真誠的)','positive (積極的)','serious (嚴肅的)'] }},
+            { id: 'cl3', title: 'Need Improvement', titleZH: '需要改善', template: 'If {he} can show more {noun} in {subject}, better results are expected.', pools: { noun: ['effort (努力)','focus (專注)','determination (決心)'], subject: ['weak subjects (弱勢學科)','English (英語)','Mathematics (數學)'] }},
+            { id: 'cl4', title: 'Social Advice', titleZH: '社交建議', template: 'Greater success is expected if {he} pays more {noun}.', pools: { noun: ['attention to details (對細節的關注)','patience (耐性)'] }},
+            { id: 'cl5', title: 'Specific Advice', titleZH: '具體建議', template: '{He} needs greater {noun} to achieve a higher academic standard.', pools: { noun: ['motivation (動力)','self-discipline (自律)','concentration (專注力)'] }},
+            { id: 'cl6', title: 'Encouraging', titleZH: '鼓勵說話', template: 'With more {noun}, {he} will be able to perform even better.', pools: { noun: ['confidence (自信)','initiative (主動性)'] }}
         ];
 
         // --- STATE ---
@@ -291,6 +324,26 @@
             selectOption('s2', 'bd3', false);
             selectOption('s3', 'cl1', false);
             switchTab('s1');
+        }
+
+        // --- I18N LOGIC ---
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            
+            // Update UI Strings
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.textContent = i18n[currentLang][key];
+                }
+            });
+
+            // Update Placeholder
+            document.getElementById('studentName').placeholder = currentLang === 'en' ? "e.g. Chan Tai Man" : "例如: 陳大文";
+
+            // Re-render components that contain dynamic text
+            switchTab(state.activeTab); // Re-render Tab content
+            renderCustomization(); // Re-render word chips
         }
 
         // --- TAB LOGIC ---
@@ -336,18 +389,23 @@
             // Check if disabled
             const isEnabled = state[`${segment}Enabled`];
             if (!isEnabled) {
-                container.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400 italic">This sentence is currently disabled. Check the box above to enable options.</div>`;
+                container.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400 italic">${i18n[currentLang].disabledMsg}</div>`;
                 return;
             }
 
             data.forEach(opt => {
                 const isSelected = state[segment] === opt.id;
                 const card = document.createElement('div');
-                card.className = `option-card bg-white rounded-xl p-5 border shadow-sm ${isSelected ? 'active border-blue-600 bg-blue-50' : 'border-slate-200'}`;
+                card.className = `option-card bg-white rounded-xl p-5 shadow-sm ${isSelected ? 'active border-blue-600 bg-blue-50' : 'border-slate-200'}`;
                 card.onclick = () => selectOption(segment, opt.id, true);
+                
+                // --- UPDATE: Bigger Titles & Bilingual ---
                 card.innerHTML = `
-                    <h3 class="font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'} text-sm mb-2">${opt.title}</h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">${opt.template.replace(/\{.*?\}/g, '___')}</p>
+                    <div class="mb-2">
+                        <h3 class="font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'} text-lg leading-tight">${opt.title}</h3>
+                        <p class="option-title-zh text-sm mt-0.5">${opt.titleZH}</p>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-2 mt-auto">${opt.template.replace(/\{.*?\}/g, '___')}</p>
                 `;
                 container.appendChild(card);
             });
@@ -399,9 +457,14 @@
                     const section = document.createElement('div');
                     section.className = "border-l-4 border-slate-200 pl-4 py-1";
                     
+                    // Label Translation Logic for Headers in customization
+                    const sentenceLabels = currentLang === 'en' 
+                        ? [`Sentence 1: ${data.title}`, `Sentence 2: ${data.title}`, `Sentence 3: ${data.title}`]
+                        : [`第一句: ${data.titleZH}`, `第二句: ${data.titleZH}`, `第三句: ${data.titleZH}`];
+                    
                     const title = document.createElement('h4');
                     title.className = "text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider";
-                    title.textContent = `Sentence ${index+1}: ${data.title}`;
+                    title.textContent = sentenceLabels[index];
                     section.appendChild(title);
 
                     keys.forEach(key => {
@@ -410,7 +473,14 @@
                         
                         const label = document.createElement('p');
                         label.className = "text-xs font-semibold text-slate-500 mb-2";
-                        label.textContent = `Choose ${key}:`;
+                        // Simple key mapping
+                        const keyMap = { adj: "Adjective", adv: "Adverb", noun: "Noun", verb: "Verb", phrase: "Phrase", role: "Role", subject: "Subject" };
+                        const keyMapZH = { adj: "形容詞", adv: "副詞", noun: "名詞", verb: "動詞", phrase: "短語", role: "職位", subject: "科目" };
+                        // Handle adj1, adj2 etc
+                        const cleanKey = key.replace(/[0-9]/g, '');
+                        label.textContent = currentLang === 'en' 
+                            ? `Choose ${keyMap[cleanKey] || key}:` 
+                            : `選擇 ${keyMapZH[cleanKey] || key}:`;
                         
                         const chips = document.createElement('div');
                         chips.className = "flex flex-wrap gap-2";
@@ -432,6 +502,8 @@
                                 renderCustomization();
                                 updatePreview();
                             };
+                            
+                            // Keep Chinese meaning even in English mode as requested
                             btn.innerHTML = `<span class="font-medium">${eng}</span>${chi ? ` <span class="text-[10px] opacity-75"> ${chi}</span>` : ''}`;
                             chips.appendChild(btn);
                         });
