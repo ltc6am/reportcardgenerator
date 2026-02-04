@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v8</title>
+    <title>HK Report Card Generator v9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     <!-- Favicon SVG -->
@@ -127,7 +127,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v8</span></h1>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-800">Report Card Gen <span class="text-blue-600">v9</span></h1>
                 </div>
             </div>
             <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
@@ -269,7 +269,7 @@
     </div>
 
     <script>
-        // --- DATA STRUCTURES (MODULARIZED) ---
+        // --- DATA STRUCTURES (MODULARIZED & ENRICHED) ---
         
         // Categories: 'high' (High Achievers), 'potential' (Needs Improvement), 'social' (Social)
         
@@ -286,11 +286,26 @@
                     { id: 's3', label: 'Closing: Attitude', text: '{His} {adj3} attitude is reflected in the high quality of {his} school work.', placeholders: ['adj3'] }
                 ],
                 pools: {
-                    adj1: ['capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)'],
-                    adj2: ['excellent (優秀的)', 'promising (有前途的)', 'outstanding (傑出的)', 'tremendous (極大的)'],
-                    adv: ['steadily (穩定地)', 'conscientiously (認真地)', 'diligently (勤奮地)', 'consistently (一貫地)'],
-                    noun: ['responsibility (責任感)', 'leadership (領導能力)', 'perseverance (毅力)', 'integrity (正直)'],
-                    adj3: ['sincere (真誠的)', 'positive (積極的)', 'serious (嚴肅的)', 'mature (成熟的)']
+                    adj1: [
+                        'capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)',
+                        'logical (合乎邏輯的)', 'self-confident (有自信的)', 'conscientious (認真盡責的)', 'bright (聰明的)'
+                    ],
+                    adj2: [
+                        'excellent (優秀的)', 'promising (有前途的)', 'outstanding (傑出的)', 'tremendous (極大的)', 
+                        'great (巨大的)', 'unlimited (無限的)'
+                    ],
+                    adv: [
+                        'steadily (穩定地)', 'conscientiously (認真地)', 'diligently (勤奮地)', 'consistently (一貫地)', 
+                        'tirelessly (不知疲倦地)', 'systematically (有系統地)'
+                    ],
+                    noun: [
+                        'responsibility (責任感)', 'leadership (領導能力)', 'perseverance (毅力)', 'integrity (正直)', 
+                        'determination (決心)', 'initiative (主動性)', 'self-discipline (自律)'
+                    ],
+                    adj3: [
+                        'sincere (真誠的)', 'positive (積極的)', 'serious (嚴肅的)', 'mature (成熟的)', 
+                        'diligent (勤奮的)', 'systematic (有系統的)'
+                    ]
                 }
             },
             {
@@ -305,11 +320,25 @@
                     { id: 's3', label: 'Closing: Potential', text: 'With more {noun}, {he} will be able to perform even better.', placeholders: ['noun'] }
                 ],
                 pools: {
-                    adj1: ['gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)'],
-                    adj2: ['polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)'],
-                    adj3: ['steady (穩定的)', 'diligent (勤奮的)', 'conscientious (認真的)', 'hardworking (努力的)'],
-                    adv: ['carefully (仔細地)', 'punctually (準時地)', 'neatly (整潔地)', 'thoroughly (徹底地)'],
-                    noun: ['confidence (自信)', 'initiative (主動性)', 'active participation (積極參與)']
+                    adj1: [
+                        'gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)', 
+                        'good-natured (脾氣好的)', 'considerate (體諒的)'
+                    ],
+                    adj2: [
+                        'polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)', 
+                        'faithful (忠實的)', 'reliable (可靠的)'
+                    ],
+                    adj3: [
+                        'steady (穩定的)', 'diligent (勤奮的)', 'conscientious (認真的)', 'hardworking (努力的)', 
+                        'consistent (一貫的)'
+                    ],
+                    adv: [
+                        'carefully (仔細地)', 'punctually (準時地)', 'neatly (整潔地)', 'thoroughly (徹底地)', 
+                        'with effort (努力地)'
+                    ],
+                    noun: [
+                        'confidence (自信)', 'initiative (主動性)', 'active participation (積極參與)', 'courage (勇氣)'
+                    ]
                 }
             },
             {
@@ -324,8 +353,14 @@
                     { id: 's3', label: 'Closing: Attitude', text: '{He} is quick to accept advice and {phrase}.', placeholders: ['phrase'] }
                 ],
                 pools: {
-                    adj1: ['friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)'],
-                    adj2: ['reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'committed (盡責的)'],
+                    adj1: [
+                        'friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)', 
+                        'trustworthy (值得信賴的)', 'approachable (平易近人的)'
+                    ],
+                    adj2: [
+                        'reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'committed (盡責的)', 
+                        'co-operative (合作的)', 'sympathetic (有同情心的)'
+                    ],
                     role: ['Class Monitor (班長)', 'Class Monitress (女班長)', 'Prefect (領袖生)', 'IT Prefect (IT領袖生)', 'Subject Leader (科長)'],
                     phrase: ['eager to improve (渴望進步)', 'willing to serve (樂意服務)', 'sets a good example (樹立好榜樣)']
                 }
@@ -342,7 +377,7 @@
                     { id: 's3', label: 'Closing: Advice', text: '{He} should continue to {phrase} for improvement.', placeholders: ['phrase'] }
                 ],
                 pools: {
-                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)'],
+                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)', 'earnest (認真的)'],
                     adj2: ['above-average (高於平均的)', 'good (良好的)', 'promising (有前途的)', 'great (巨大的)'],
                     phrase: ['work hard (努力工作)', 'strive for excellence (追求卓越)', 'maintain his efforts (保持努力)', 'read more broadly (廣泛閱讀)']
                 }
@@ -362,9 +397,9 @@
                     { id: 's3', label: 'Closing: Advice', text: 'If {he} can show more {noun} in {his} weak subjects, better results are expected.', placeholders: ['noun'] }
                 ],
                 pools: {
-                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)'],
-                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)'],
-                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)']
+                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)', 'capable (有能力的)'],
+                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)', 'is careless (粗心大意)'],
+                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)', 'self-discipline (自律)']
                 }
             },
             {
@@ -396,7 +431,7 @@
                 pools: {
                     adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
                     adj2: ['obedient (聽話的)', 'well-behaved (行為良好的)', 'respectful (尊重的)', 'quiet (安靜的)'],
-                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)']
+                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)', 'attention to details (對細節的關注)']
                 }
             },
 
@@ -413,8 +448,8 @@
                     { id: 's2', label: 'Closing: Advice', text: 'While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.', placeholders: ['adj3', 'noun'] }
                 ],
                 pools: {
-                    adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)'],
-                    adj2: ['positive (正面的)', 'optimistic (樂觀的)', 'upbeat (樂觀的)', 'sociable (善於社交的)'],
+                    adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)', 'upbeat (活躍積極的)'],
+                    adj2: ['positive (正面的)', 'optimistic (樂觀的)', 'sociable (善於社交的)', 'warm-hearted (熱心的)'],
                     adj3: ['friendly (友善的)', 'popular (受歡迎的)', 'supportive (支持他人的)', 'generous (大方的)'],
                     noun: ['motivation (動力)', 'academic focus (學業專注)', 'attentiveness (專注力)']
                 }
@@ -607,7 +642,6 @@
                 const label = document.createElement('label');
                 label.htmlFor = checkboxId;
                 label.className = "font-bold text-slate-700 cursor-pointer select-none";
-                // --- UPDATE: Use Descriptive Label instead of 'Sentence X' ---
                 label.textContent = seg.label || `Sentence ${index + 1}`; 
 
                 header.appendChild(checkbox);
