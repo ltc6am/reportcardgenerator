@@ -3,64 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Teacher's Report Card Generator v4</title>
+    <title>HK Report Card Generator v5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Favicon SVG -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; }
+        body { font-family: 'Noto Sans', sans-serif; scroll-behavior: smooth; }
         .vibe-card { transition: all 0.2s ease; cursor: pointer; }
-        .vibe-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .vibe-card.active { border-color: #3b82f6; background-color: #eff6ff; ring: 2px solid #3b82f6; }
+        .vibe-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .vibe-card.active { border-color: #2563eb; background-color: #eff6ff; ring: 2px solid #2563eb; }
         
-        .word-chip { transition: all 0.15s ease; cursor: pointer; user-select: none; }
-        .word-chip:hover { transform: translateY(-1px); }
+        .word-chip { transition: all 0.1s ease; cursor: pointer; user-select: none; }
+        .word-chip:hover { transform: translateY(-1px); border-color: #60a5fa; }
         .word-chip.active { background-color: #2563eb; color: white; border-color: #2563eb; }
         
-        /* Smooth fade in for sections */
-        .fade-in { animation: fadeIn 0.4s ease-in; }
+        .step-badge { width: 24px; height: 24px; border-radius: 50%; background: #dbeafe; color: #1e40af; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        
+        /* Smooth fade in */
+        .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 pb-40">
 
     <!-- Navbar -->
-    <nav class="bg-blue-700 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">Report Card Comment Generator</h1>
-                <p class="text-blue-200 text-xs hidden sm:block">Quickly draft professional comments for HK students</p>
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <!-- SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                </svg>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Report Card Generator</h1>
+                    <p class="text-blue-200 text-xs hidden sm:block">For Hong Kong Teachers | v5.0</p>
+                </div>
             </div>
-            <div class="text-xs bg-blue-800 px-3 py-1 rounded-full">v4.0</div>
+            <a href="#instructions" class="text-sm bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-md transition-colors">How to Use?</a>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-8">
+    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-8">
+
+        <!-- INSTRUCTIONS -->
+        <div id="instructions" class="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-xl p-6 shadow-sm">
+            <h2 class="text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                How to use this system
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
+                <div class="flex gap-3">
+                    <div class="step-badge shrink-0">1</div>
+                    <p><strong class="text-slate-800">Input Profile:</strong> Enter the student's name and select gender. The system automatically handles all "He/She/His/Her" grammar.</p>
+                </div>
+                <div class="flex gap-3">
+                    <div class="step-badge shrink-0">2</div>
+                    <p><strong class="text-slate-800">Select Vibe:</strong> Choose the category that best fits the student (e.g., "Smart but Passive").</p>
+                </div>
+                <div class="flex gap-3">
+                    <div class="step-badge shrink-0">3</div>
+                    <p><strong class="text-slate-800">Customize & Copy:</strong> Click the word chips to adjust adjectives. The preview updates instantly. Click "Copy" to finish.</p>
+                </div>
+            </div>
+        </div>
 
         <!-- SECTION 1: Student Details -->
-        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                Student Details
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-10 -mt-10 z-0"></div>
+            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2 relative z-10">
+                <span class="step-badge">1</span> Student Details
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-2">Student Name</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Name</label>
                     <input type="text" id="studentName" placeholder="e.g. Chan Tai Man" 
-                        class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm"
                         oninput="updatePreview()">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-2">Gender (Auto-pronouns)</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Gender</label>
                     <div class="flex gap-4">
-                        <label class="flex-1 relative">
+                        <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="M" checked class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all">
+                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer bg-white group-hover:border-blue-300 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all shadow-sm">
                                 👦 Male (He/His)
                             </div>
                         </label>
-                        <label class="flex-1 relative">
+                        <label class="flex-1 relative group">
                             <input type="radio" name="gender" value="F" class="peer sr-only" onchange="handleGenderChange()">
-                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all">
+                            <div class="p-3 text-center border border-slate-200 rounded-lg cursor-pointer bg-white group-hover:border-pink-300 peer-checked:bg-pink-50 peer-checked:border-pink-500 peer-checked:text-pink-700 transition-all shadow-sm">
                                 👧 Female (She/Her)
                             </div>
                         </label>
@@ -72,10 +106,10 @@
         <!-- SECTION 2: Select Vibe -->
         <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                Select Student "Vibe"
+                <span class="step-badge">2</span> Select Student "Vibe"
             </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="vibeContainer">
+            <p class="text-xs text-slate-500 mb-4">Choose from 10 distinct student profiles:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4" id="vibeContainer">
                 <!-- Vibe Cards generated by JS -->
             </div>
         </section>
@@ -83,29 +117,30 @@
         <!-- SECTION 3: Customize Words -->
         <section id="customizationSection" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hidden fade-in">
             <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
-                Customize Vocabulary
+                <span class="step-badge">3</span> Customize Vocabulary
             </h2>
             <div id="wordPools" class="space-y-6">
                 <!-- Dynamic Word Pools generated by JS -->
             </div>
-            <!-- Spacer for bottom visibility -->
             <div class="h-12"></div>
         </section>
 
     </main>
 
     <!-- SECTION 4: Sticky Footer Preview -->
-    <footer class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40">
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+    <footer class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] p-4 md:px-8 z-40 transition-all">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
             <div class="flex-1 w-full">
-                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Preview</p>
-                <div id="previewText" class="text-lg font-serif text-slate-800 leading-relaxed min-h-[3rem] p-2 bg-slate-50 rounded border border-slate-100">
+                <div class="flex justify-between items-end mb-1">
+                     <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Preview</p>
+                     <span id="wordCount" class="text-[10px] text-slate-400">0 words</span>
+                </div>
+                <div id="previewText" class="text-lg font-serif text-slate-800 leading-relaxed min-h-[3rem] p-3 bg-slate-50/50 rounded-lg border border-slate-200/60 hover:bg-white transition-colors">
                     Select a vibe to begin...
                 </div>
             </div>
-            <div class="shrink-0 w-full md:w-auto">
-                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95">
+            <div class="shrink-0 w-full md:w-auto self-center md:self-auto">
+                <button onclick="copyToClipboard()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 active:scale-95 active:shadow-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
@@ -116,17 +151,20 @@
     </footer>
 
     <!-- Success Toast -->
-    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-        </svg>
-        <span>Copied to clipboard!</span>
+    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-3 translate-y-4">
+        <div class="bg-green-500 rounded-full p-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <span class="font-medium">Copied to clipboard!</span>
     </div>
 
     <script>
-        // --- DATA STRUCTURES (EXPANDED POOL) ---
+        // --- DATA STRUCTURES (EXPANDED TO 10 VIBES) ---
         
         const vibes = [
+            // --- ORIGINAL 5 ---
             {
                 id: 'allrounder',
                 title: 'All-Rounder',
@@ -134,26 +172,11 @@
                 icon: '🌟',
                 template: '{Name} is a {adj1} student with {adj2} potential. {He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}. {His} {adj3} attitude is reflected in the high quality of {his} school work.',
                 pools: {
-                    adj1: [
-                        'capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 
-                        'disciplined (自律的)', 'talented (有才華的)', 'bright (聰明的)', 'conscientious (盡責的)'
-                    ],
-                    adj2: [
-                        'excellent (優秀的)', 'great (巨大的)', 'promising (有前途的)', 'unlimited (無限的)',
-                        'outstanding (傑出的)', 'tremendous (極大的)', 'academic (學術的)'
-                    ],
-                    adv: [
-                        'steadily (穩定地)', 'conscientiously (認真地)', 'diligently (勤奮地)', 'tirelessly (不知疲倦地)',
-                        'consistently (一貫地)', 'with perseverance (堅毅地)'
-                    ],
-                    noun: [
-                        'responsibility (責任感)', 'leadership (領導能力)', 'perseverance (毅力)', 'integrity (正直)',
-                        'self-discipline (自律)', 'determination (決心)'
-                    ],
-                    adj3: [
-                        'sincere (真誠的)', 'positive (積極的)', 'serious (嚴肅的)', 'mature (成熟的)',
-                        'keen (熱切的)', 'diligent (勤奮的)'
-                    ]
+                    adj1: ['capable (有能力的)', 'intelligent (聰穎的)', 'earnest (認真的)', 'self-motivated (自動自發的)', 'disciplined (自律的)'],
+                    adj2: ['excellent (優秀的)', 'promising (有前途的)', 'outstanding (傑出的)', 'tremendous (極大的)'],
+                    adv: ['steadily (穩定地)', 'conscientiously (認真地)', 'diligently (勤奮地)', 'consistently (一貫地)'],
+                    noun: ['responsibility (責任感)', 'leadership (領導能力)', 'perseverance (毅力)', 'integrity (正直)'],
+                    adj3: ['sincere (真誠的)', 'positive (積極的)', 'serious (嚴肅的)', 'mature (成熟的)']
                 }
             },
             {
@@ -163,26 +186,11 @@
                 icon: '📚',
                 template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers. {He} is a {adj3} worker who always completes assignments {adv}. With more {noun}, {he} will be able to perform even better.',
                 pools: {
-                    adj1: [
-                        'gentle (溫和的)', 'well-behaved (行為良好的)', 'warm-hearted (熱心的)', 'polite (有禮貌的)',
-                        'quiet (安靜的)', 'calm (冷靜的)', 'humble (謙虛的)'
-                    ],
-                    adj2: [
-                        'polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)',
-                        'trustworthy (值得信賴的)', 'honest (誠實的)'
-                    ],
-                    adj3: [
-                        'steady (穩定的)', 'diligent (勤奮的)', 'self-disciplined (自律的)', 'conscientious (認真的)',
-                        'hardworking (努力的)', 'reliable (可靠的)'
-                    ],
-                    adv: [
-                        'carefully (仔細地)', 'with perseverance (堅持不懈地)', 'punctually (準時地)', 'neatly (整潔地)',
-                        'thoroughly (徹底地)', 'with effort (努力地)'
-                    ],
-                    noun: [
-                        'confidence (自信)', 'initiative (主動性)', 'active participation (積極參與)', 'courage (勇氣)',
-                        'attention to details (對細節的關注)'
-                    ]
+                    adj1: ['gentle (溫和的)', 'well-behaved (行為良好的)', 'quiet (安靜的)', 'calm (冷靜的)'],
+                    adj2: ['polite (有禮貌的)', 'obedient (聽話的)', 'sincere (真誠的)', 'courteous (謙恭的)'],
+                    adj3: ['steady (穩定的)', 'diligent (勤奮的)', 'conscientious (認真的)', 'hardworking (努力的)'],
+                    adv: ['carefully (仔細地)', 'punctually (準時地)', 'neatly (整潔地)', 'thoroughly (徹底地)'],
+                    noun: ['confidence (自信)', 'initiative (主動性)', 'active participation (積極參與)']
                 }
             },
             {
@@ -192,18 +200,9 @@
                 icon: '💡',
                 template: '{Name} is an {adj1} learner with good potential. However, {he} sometimes {verb} in class. If {he} can show more {noun} in {his} weak subjects, better results are expected.',
                 pools: {
-                    adj1: [
-                        'intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)', 
-                        'capable (有能力的)', 'outgoing (外向的)'
-                    ],
-                    verb: [
-                        'lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)',
-                        'lacks self-discipline (欠缺自律)', 'needs reminders (需要提醒)'
-                    ],
-                    noun: [
-                        'determination (決心)', 'effort (努力)', 'focus (專注)', 'attention to details (對細節的關注)', 
-                        'patience (耐性)', 'self-control (自制)'
-                    ]
+                    adj1: ['intelligent (聰穎的)', 'smart (聰明的)', 'agile (思維敏捷的)', 'active (活躍的)'],
+                    verb: ['lacks concentration (欠缺集中力)', 'is talkative (多言)', 'daydreams (發白日夢)', 'gets distracted (容易分心)'],
+                    noun: ['determination (決心)', 'effort (努力)', 'focus (專注)', 'patience (耐性)']
                 }
             },
             {
@@ -213,36 +212,10 @@
                 icon: '🤝',
                 template: '{Name} is a {adj1} and {adj2} student who gets along well with others. {He} deserves credit for discharging {his} duties as {role} faithfully. {He} is quick to accept advice and {phrase}.',
                 pools: {
-                    adj1: [
-                        'friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'approachable (平易近人的)', 
-                        'kind (善良的)', 'sincere (真誠的)', 'cooperative (合作的)'
-                    ],
-                    adj2: [
-                        'reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'well-behaved (行為良好的)',
-                        'committed (盡責的)', 'hardworking (努力的)'
-                    ],
-                    role: [
-                        // DYNAMICALLY FILTERED BY GENDER
-                        'Class Monitor (班長)', 
-                        'Class Monitress (女班長)',
-                        'Prefect (領袖生)',
-                        'Class Club Chairperson (學會主席)',
-                        'Class Club Vice-chairperson (學會副主席)',
-                        'Class Club Committee Member (學會委員)',
-                        'Class Club Hon. Secretary (學會文書)',
-                        'Class Club Hon. Treasurer (學會財政)',
-                        'Homework Leader (功課長)',
-                        'IT Prefect (資訊科技領袖生)',
-                        'Reading Leader (閱讀大使)',
-                        'Peer Counselor (朋輩輔導員)',
-                        'Peer Tutor (小導師)',
-                        'Subject Leader (科長)'
-                    ],
-                    phrase: [
-                        'ready to take up responsibilities (樂意承擔責任)', 'eager to improve (渴望進步)', 
-                        'willing to serve (樂意服務)', 'sets a good example (樹立好榜樣)', 
-                        'serves with dedication (全心服務)', 'humble to take advice (虛心受教)'
-                    ]
+                    adj1: ['friendly (友善的)', 'helpful (樂於助人的)', 'responsible (負責任的)', 'kind (善良的)'],
+                    adj2: ['reliable (可靠的)', 'trustworthy (值得信賴的)', 'honest (誠實的)', 'committed (盡責的)'],
+                    role: ['Class Monitor (班長)', 'Class Monitress (女班長)', 'Prefect (領袖生)', 'IT Prefect (IT領袖生)', 'Subject Leader (科長)'],
+                    phrase: ['eager to improve (渴望進步)', 'willing to serve (樂意服務)', 'sets a good example (樹立好榜樣)']
                 }
             },
             {
@@ -252,22 +225,77 @@
                 icon: '⚡',
                 template: '{Name} is a very {adj1} and {adj2} student. While {he} is {adj3} and helpful to peers, {he} needs to find greater {noun} to achieve a higher academic standard.',
                 pools: {
-                    adj1: [
-                        'outgoing (外向的)', 'sociable (善於社交的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 
-                        'lively (活潑的)', 'humorous (幽默的)'
-                    ],
-                    adj2: [
-                        'positive (正面的)', 'optimistic (樂觀的)', 'upbeat (樂觀的)', 'pleasant (令人愉快的)',
-                        'expressive (善於表達的)'
-                    ],
-                    adj3: [
-                        'friendly (友善的)', 'popular (受歡迎的)', 'supportive (支持他人的)', 'generous (大方的)',
-                        'warm-hearted (熱心的)'
-                    ],
-                    noun: [
-                        'academic focus (學業專注)', 'motivation (動力)', 'quietness (安靜)', 'attentiveness (專注力)',
-                        'attention to details (對細節的關注)', 'sense of responsibility (責任感)'
+                    adj1: ['outgoing (外向的)', 'energetic (充滿活力的)', 'cheerful (開朗的)', 'lively (活潑的)'],
+                    adj2: ['positive (正面的)', 'optimistic (樂觀的)', 'upbeat (樂觀的)', 'sociable (善於社交的)'],
+                    adj3: ['friendly (友善的)', 'popular (受歡迎的)', 'supportive (支持他人的)', 'generous (大方的)'],
+                    noun: ['motivation (動力)', 'academic focus (學業專注)', 'attentiveness (專注力)']
+                }
+            },
+
+            // --- NEW 5 VIBES (BASED ON YOUR ANALYSIS) ---
+            {
+                id: 'sincere_careless',
+                title: 'Friendly but Careless',
+                subtitle: 'Need Details / 友善粗心型',
+                icon: '😊',
+                template: '{Name} is a {adj1} and {adj2} student who gets along well with classmates. Greater success is expected if {he} pays more {noun}.',
+                pools: {
+                    adj1: ['sincere (真誠的)', 'kind (善良的)', 'warm-hearted (熱心的)', 'pleasant (令人愉快的)'],
+                    adj2: ['friendly (友善的)', 'polite (有禮貌的)', 'helpful (樂於助人的)', 'easy-going (隨和的)'],
+                    noun: ['attention to details (對細節的關注)', 'carefulness in work (工作的細心)', 'patience (耐性)']
+                }
+            },
+            {
+                id: 'smart_passive',
+                title: 'Smart but Passive',
+                subtitle: 'Lacks Drive / 聰明被動型',
+                icon: '🐢',
+                template: '{Name} is a {adj1} student but {he} lacks {noun1} to achieve a higher standard. {He} could make further progress in {his} studies by {phrase}.',
+                pools: {
+                    adj1: ['smart (聰明的)', 'clever (靈巧的)', 'bright (聰穎的)', 'capable (有能力的)'],
+                    noun1: ['strong determination (強大的決心)', 'motivation (動力)', 'initiative (主動性)', 'drive (幹勁)'],
+                    phrase: [
+                        'working harder (更努力工作)', 
+                        'taking an active role in learning (積極參與學習)', 
+                        'being more proactive (更加主動)',
+                        'setting higher goals (設定更高目標)'
                     ]
+                }
+            },
+            {
+                id: 'social_talkative',
+                title: 'Social but Talkative',
+                subtitle: 'Needs Initiative / 社交多言型',
+                icon: '💬',
+                template: '{Name} gets along well with others but is sometimes {adj1} in class. {He} is capable of making further progress if {he} shows more {noun} in {subject}.',
+                pools: {
+                    adj1: ['talkative (多言的)', 'chatty (愛聊天的)', 'distracted (分心的)', 'restless (坐立不安的)'],
+                    noun: ['initiative (主動性)', 'concentration (專注力)', 'effort (努力)', 'seriousness (認真)'],
+                    subject: ['learning English (學習英語)', 'his studies (他的學業)', 'class participation (課堂參與)', 'Mathematics (數學)']
+                }
+            },
+            {
+                id: 'diligent_potential',
+                title: 'Diligent & Potential',
+                subtitle: 'Good Potential / 勤奮潛質型',
+                icon: '📈',
+                template: '{Name} is a {adj1} student of {adj2} potential. {He} should continue to {phrase} for improvement.',
+                pools: {
+                    adj1: ['diligent (勤奮的)', 'hardworking (努力的)', 'conscientious (認真的)', 'steady (穩定的)'],
+                    adj2: ['above-average (高於平均的)', 'good (良好的)', 'promising (有前途的)', 'great (巨大的)'],
+                    phrase: ['work hard (努力工作)', 'strive for excellence (追求卓越)', 'maintain his efforts (保持努力)', 'read more broadly (廣泛閱讀)']
+                }
+            },
+            {
+                id: 'polite_unfocused',
+                title: 'Polite but Unfocused',
+                subtitle: 'Needs Concentration / 有禮欠專注',
+                icon: '🧘',
+                template: '{Name} is {adj1} and {adj2} student. {He} could show more {noun} in {his} weak subjects, better results are expected.',
+                pools: {
+                    adj1: ['polite (有禮貌的)', 'courteous (謙恭的)', 'gentle (溫和的)', 'humble (謙虛的)'],
+                    adj2: ['obedient (聽話的)', 'well-behaved (行為良好的)', 'respectful (尊重的)', 'quiet (安靜的)'],
+                    noun: ['concentration (專注力)', 'focus (焦點)', 'perseverance (毅力)', 'determination (決心)']
                 }
             }
         ];
@@ -292,9 +320,9 @@
                 card.onclick = () => selectVibe(vibe.id, card);
                 
                 card.innerHTML = `
-                    <div class="text-3xl bg-slate-50 p-2 rounded-lg">${vibe.icon}</div>
+                    <div class="text-3xl bg-slate-50 p-2 rounded-lg shrink-0">${vibe.icon}</div>
                     <div>
-                        <h3 class="font-bold text-slate-800">${vibe.title}</h3>
+                        <h3 class="font-bold text-slate-800 text-sm md:text-base">${vibe.title}</h3>
                         <p class="text-xs text-slate-500 font-medium mt-1">${vibe.subtitle}</p>
                     </div>
                 `;
@@ -313,11 +341,8 @@
             
             // Set Defaults
             selections = {};
-            
-            // Logic to pick default words
             Object.keys(currentVibe.pools).forEach(key => {
                 if (key === 'role') {
-                    // Special logic for role default
                     const roleOptions = getRoleOptions();
                     selections[key] = roleOptions[0].split(' (')[0];
                 } else {
@@ -336,7 +361,6 @@
             updatePreview();
         }
 
-        // Helper to get roles based on Gender
         function getRoleOptions() {
             const gender = document.querySelector('input[name="gender"]:checked').value;
             const originalRoles = currentVibe.pools.role || [];
@@ -349,10 +373,9 @@
         }
 
         function handleGenderChange() {
-            // If the user is currently editing "Helpful Leader", re-render the word pool to switch Monitor/Monitress
             if (currentVibe && currentVibe.id === 'leader') {
                 renderWordPools();
-                // If current selection is invalid (e.g., switched M->F but selection is Monitor), reset it
+                // Reset role if invalid for gender
                 const availableRoles = getRoleOptions().map(r => r.split(' (')[0]);
                 if (!availableRoles.includes(selections.role)) {
                    selections.role = availableRoles[0];
@@ -376,7 +399,6 @@
                 const chipsContainer = document.createElement('div');
                 chipsContainer.className = "flex flex-wrap gap-2";
                 
-                // Determine which pool to use (standard or gender-filtered role)
                 let poolToRender = currentVibe.pools[key];
                 if (key === 'role') {
                     poolToRender = getRoleOptions();
@@ -390,7 +412,7 @@
                     const chip = document.createElement('button');
                     const isSelected = selections[key] === english;
                     
-                    chip.className = `word-chip px-3 py-1.5 rounded-lg border text-sm text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-300'}`;
+                    chip.className = `word-chip px-3 py-2 rounded-lg border text-sm text-left flex flex-col leading-tight ${isSelected ? 'active bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-white hover:border-blue-300'}`;
                     chip.onclick = () => {
                         selections[key] = english;
                         renderWordPools(); 
@@ -399,7 +421,7 @@
                     
                     chip.innerHTML = `
                         <span class="font-medium">${english}</span>
-                        ${chinese ? `<span class="text-[10px] opacity-80 font-normal">${chinese}</span>` : ''}
+                        ${chinese ? `<span class="text-[10px] opacity-70 font-normal mt-0.5">${chinese}</span>` : ''}
                     `;
                     chipsContainer.appendChild(chip);
                 });
@@ -413,10 +435,11 @@
         function formatLabel(key) {
             if (key.startsWith('adj')) return 'Adjective / Description';
             if (key === 'adv') return 'Adverb';
-            if (key === 'noun') return 'Noun / Quality';
+            if (key.startsWith('noun')) return 'Noun / Quality';
             if (key === 'verb') return 'Verb';
-            if (key === 'phrase') return 'Action Phrase';
+            if (key === 'phrase') return 'Suggestion / Phrase';
             if (key === 'role') return 'Role / Duty';
+            if (key === 'subject') return 'Subject / Area';
             return key;
         }
 
@@ -436,6 +459,7 @@
                 ? { sub: 'He', obj: 'him', poss: 'his' }
                 : { sub: 'She', obj: 'her', poss: 'her' };
             
+            // Gender Replacement
             text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${name}</span>`);
             text = text.replace(/{He}/g, pronouns.sub);
             text = text.replace(/{he}/g, pronouns.sub.toLowerCase());
@@ -444,13 +468,19 @@
             text = text.replace(/{Him}/g, pronouns.obj.charAt(0).toUpperCase() + pronouns.obj.slice(1));
             text = text.replace(/{him}/g, pronouns.obj);
 
+            // Word Selection Replacement
             Object.keys(selections).forEach(key => {
                 const word = selections[key];
                 const regex = new RegExp(`{${key}}`, 'g');
-                text = text.replace(regex, `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded">${word}</span>`);
+                text = text.replace(regex, `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded border border-blue-100">${word}</span>`);
             });
 
             previewBox.innerHTML = text;
+            
+            // Count words (strip HTML)
+            const plainText = previewBox.innerText;
+            const count = plainText.trim().split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('wordCount').innerText = `${count} words`;
         }
 
         function copyToClipboard() {
@@ -459,10 +489,10 @@
             const textToCopy = previewDiv.innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const toast = document.getElementById('toast');
-                toast.style.opacity = '1';
+                toast.classList.remove('opacity-0', 'translate-y-4');
                 setTimeout(() => {
-                    toast.style.opacity = '0';
-                }, 3000);
+                    toast.classList.add('opacity-0', 'translate-y-4');
+                }, 2000);
             });
         }
 
