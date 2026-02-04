@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v12</title>
+    <title>HK Report Card Generator v13</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <style>
         body { 
-            font-family: 'Noto Sans', sans-serif; 
+            font-family: 'Noto Sans', 'Noto Serif TC', sans-serif; 
             background: #f0f4f8;
             background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 24px 24px;
@@ -37,7 +37,7 @@
         .sentence-tab.active .sub-text { color: #bfdbfe; }
         .sentence-tab .sub-text { color: #94a3b8; transition: color 0.2s; }
 
-        /* Option Cards - Enhanced Visibility */
+        /* Option Cards */
         .option-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
@@ -91,15 +91,15 @@
                 <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v12</span></h1>
+                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v13</span></h1>
             </div>
             <div class="flex gap-3">
                 <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span data-i18n="howToUse">How to Use?</span>
                 </button>
-                <button onclick="toggleLanguage()" id="langBtn" class="text-sm font-bold bg-white border border-slate-300 hover:border-blue-500 text-slate-700 px-4 py-2 rounded-lg transition-colors shadow-sm">
-                    🌐 中 / En
+                <button onclick="toggleLanguage()" id="langBtn" class="text-sm font-bold bg-white border border-slate-300 hover:border-blue-500 text-slate-700 px-4 py-2 rounded-lg transition-colors shadow-sm min-w-[80px]">
+                    En
                 </button>
             </div>
         </div>
@@ -279,33 +279,124 @@
 
         let currentLang = 'en';
 
-        // --- DATA CONFIGURATION (BILINGUAL TITLES) ---
+        // --- DATA CONFIGURATION ---
+        // Added titleZH and templateZH for full Chinese support
         
         const openings = [
-            { id: 'op1', title: 'High Achiever', titleZH: '全能型 (優異生)', template: '{Name} is a {adj1} student with {adj2} potential.', pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }},
-            { id: 'op2', title: 'Quiet & Polite', titleZH: '文靜勤奮型', template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', pools: { adj1: ['gentle (溫和的)','quiet (安靜的)','calm (冷靜的)'], adj2: ['polite (有禮貌的)','obedient (聽話的)','courteous (謙恭的)'] }},
-            { id: 'op3', title: 'Social & Active', titleZH: '社交活躍型', template: '{Name} is a very {adj1} and {adj2} student.', pools: { adj1: ['energetic (充滿活力的)','outgoing (外向的)','cheerful (開朗的)'], adj2: ['sociable (善於社交的)','positive (正面的)','optimistic (樂觀的)'] }},
-            { id: 'op4', title: 'Leader / Helper', titleZH: '樂於助人 / 領袖型', template: '{Name} is a {adj1} and {adj2} student who gets along well with others.', pools: { adj1: ['helpful (樂於助人的)','friendly (友善的)'], adj2: ['responsible (負責任的)','trustworthy (值得信賴的)'] }},
-            { id: 'op5', title: 'Distracted', titleZH: '有能力但分心型', template: '{Name} is an {adj1} learner with good potential.', pools: { adj1: ['active (活躍的)','intelligent (聰穎的)','agile (思維敏捷的)'] }},
-            { id: 'op6', title: 'Smart but Passive', titleZH: '聰明但被動型', template: '{Name} is a {adj1} student but {he} lacks {noun1}.', pools: { adj1: ['smart (聰明的)','capable (有能力的)'], noun1: ['initiative (主動性)','drive (幹勁)','confidence (自信)'] }}
+            { 
+                id: 'op1', title: 'High Achiever', titleZH: '全能型 (優異生)', 
+                template: '{Name} is a {adj1} student with {adj2} potential.', 
+                templateZH: '{Name}是一位{adj1}的學生，擁有{adj2}潛質。',
+                pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }
+            },
+            { 
+                id: 'op2', title: 'Quiet & Polite', titleZH: '文靜勤奮型', 
+                template: '{Name} is a {adj1} and {adj2} student who shows great respect for teachers.', 
+                templateZH: '{Name}是一位{adj1}及{adj2}的學生，非常尊敬師長。',
+                pools: { adj1: ['gentle (溫和的)','quiet (安靜的)','calm (冷靜的)'], adj2: ['polite (有禮貌的)','obedient (聽話的)','courteous (謙恭的)'] }
+            },
+            { 
+                id: 'op3', title: 'Social & Active', titleZH: '社交活躍型', 
+                template: '{Name} is a very {adj1} and {adj2} student.', 
+                templateZH: '{Name}是一位非常{adj1}及{adj2}的學生。',
+                pools: { adj1: ['energetic (充滿活力的)','outgoing (外向的)','cheerful (開朗的)'], adj2: ['sociable (善於社交的)','positive (正面的)','optimistic (樂觀的)'] }
+            },
+            { 
+                id: 'op4', title: 'Leader / Helper', titleZH: '樂於助人 / 領袖型', 
+                template: '{Name} is a {adj1} and {adj2} student who gets along well with others.', 
+                templateZH: '{Name}是一位{adj1}及{adj2}的學生，與人相處融洽。',
+                pools: { adj1: ['helpful (樂於助人的)','friendly (友善的)'], adj2: ['responsible (負責任的)','trustworthy (值得信賴的)'] }
+            },
+            { 
+                id: 'op5', title: 'Distracted', titleZH: '有能力但分心型', 
+                template: '{Name} is an {adj1} learner with good potential.', 
+                templateZH: '{Name}是一位{adj1}的學習者，具備良好潛質。',
+                pools: { adj1: ['active (活躍的)','intelligent (聰穎的)','agile (思維敏捷的)'] }
+            },
+            { 
+                id: 'op6', title: 'Smart but Passive', titleZH: '聰明但被動型', 
+                template: '{Name} is a {adj1} student but {he} lacks {noun1}.', 
+                templateZH: '{Name}是一位{adj1}的學生，但{he}缺乏{noun1}。',
+                pools: { adj1: ['smart (聰明的)','capable (有能力的)'], noun1: ['initiative (主動性)','drive (幹勁)','confidence (自信)'] }
+            }
         ];
 
         const bodies = [
-            { id: 'bd1', title: 'Strong Work Ethic', titleZH: '學習態度認真', template: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', pools: { adv: ['steadily (穩定地)','diligently (勤奮地)','consistently (一貫地)'], noun: ['responsibility (責任感)','perseverance (毅力)','integrity (正直)'] }},
-            { id: 'bd2', title: 'Consistent Worker', titleZH: '表現穩定', template: '{He} is a {adj} worker who always completes assignments {adv}.', pools: { adj: ['steady (穩定的)','conscientious (認真的)'], adv: ['carefully (仔細地)','punctually (準時地)','neatly (整潔地)'] }},
-            { id: 'bd3', title: 'Satisfactory Results', titleZH: '成績滿意', template: '{He} has achieved satisfactory results in most subjects.', pools: {} },
-            { id: 'bd4', title: 'Duties / Role', titleZH: '盡責服務', template: '{He} deserves credit for discharging {his} duties as {role} faithfully.', pools: { role: ['Class Monitor','Prefect','Subject Leader'] }},
-            { id: 'bd5', title: 'Distracted Behavior', titleZH: '表現分心', template: 'However, {he} sometimes {verb} in class.', pools: { verb: ['lacks concentration (欠缺集中力)','is talkative (多言)','daydreams (發白日夢)'] }},
-            { id: 'bd6', title: 'Good Behavior', titleZH: '行為良好', template: '{He} is attentive and shows good response in class.', pools: {} }
+            { 
+                id: 'bd1', title: 'Strong Work Ethic', titleZH: '學習態度認真', 
+                template: '{He} has worked {adv} throughout the term and demonstrates a strong sense of {noun}.', 
+                templateZH: '{He}在整個學期表現{adv}，並展現出強烈的{noun}。',
+                pools: { adv: ['steadily (穩定地)','diligently (勤奮地)','consistently (一貫地)'], noun: ['responsibility (責任感)','perseverance (毅力)','integrity (正直)'] }
+            },
+            { 
+                id: 'bd2', title: 'Consistent Worker', titleZH: '表現穩定', 
+                template: '{He} is a {adj} worker who always completes assignments {adv}.', 
+                templateZH: '{He}是一位{adj}的學生，總是{adv}完成作業。',
+                pools: { adj: ['steady (穩定的)','conscientious (認真的)'], adv: ['carefully (仔細地)','punctually (準時地)','neatly (整潔地)'] }
+            },
+            { 
+                id: 'bd3', title: 'Satisfactory Results', titleZH: '成績滿意', 
+                template: '{He} has achieved satisfactory results in most subjects.', 
+                templateZH: '{He}在大多數科目中均取得滿意的成績。',
+                pools: {} 
+            },
+            { 
+                id: 'bd4', title: 'Duties / Role', titleZH: '盡責服務', 
+                template: '{He} deserves credit for discharging {his} duties as {role} faithfully.', 
+                templateZH: '{He}擔任{role}一職表現盡責，值得嘉許。',
+                pools: { role: ['Class Monitor (班長)','Prefect (領袖生)','Subject Leader (科長)'] }
+            },
+            { 
+                id: 'bd5', title: 'Distracted Behavior', titleZH: '表現分心', 
+                template: 'However, {he} sometimes {verb} in class.', 
+                templateZH: '然而，{he}有時在課堂上{verb}。',
+                pools: { verb: ['lacks concentration (欠缺集中力)','is talkative (多言)','daydreams (發白日夢)'] }
+            },
+            { 
+                id: 'bd6', title: 'Good Behavior', titleZH: '行為良好', 
+                template: '{He} is attentive and shows good response in class.', 
+                templateZH: '{He}上課專心，反應良好。',
+                pools: {} 
+            }
         ];
 
         const closings = [
-            { id: 'cl1', title: 'General Advice', titleZH: '一般建議', template: '{He} should continue to {phrase} for improvement.', pools: { phrase: ['strive for excellence (追求卓越)','work hard (努力工作)','read more broadly (廣泛閱讀)'] }},
-            { id: 'cl2', title: 'Attitude Check', titleZH: '學習態度', template: '{His} {adj} attitude is reflected in the high quality of {his} school work.', pools: { adj: ['sincere (真誠的)','positive (積極的)','serious (嚴肅的)'] }},
-            { id: 'cl3', title: 'Need Improvement', titleZH: '需要改善', template: 'If {he} can show more {noun} in {subject}, better results are expected.', pools: { noun: ['effort (努力)','focus (專注)','determination (決心)'], subject: ['weak subjects (弱勢學科)','English (英語)','Mathematics (數學)'] }},
-            { id: 'cl4', title: 'Social Advice', titleZH: '社交建議', template: 'Greater success is expected if {he} pays more {noun}.', pools: { noun: ['attention to details (對細節的關注)','patience (耐性)'] }},
-            { id: 'cl5', title: 'Specific Advice', titleZH: '具體建議', template: '{He} needs greater {noun} to achieve a higher academic standard.', pools: { noun: ['motivation (動力)','self-discipline (自律)','concentration (專注力)'] }},
-            { id: 'cl6', title: 'Encouraging', titleZH: '鼓勵說話', template: 'With more {noun}, {he} will be able to perform even better.', pools: { noun: ['confidence (自信)','initiative (主動性)'] }}
+            { 
+                id: 'cl1', title: 'General Advice', titleZH: '一般建議', 
+                template: '{He} should continue to {phrase} for improvement.', 
+                templateZH: '{He}應繼續{phrase}以求進步。',
+                pools: { phrase: ['strive for excellence (追求卓越)','work hard (努力工作)','read more broadly (廣泛閱讀)'] }
+            },
+            { 
+                id: 'cl2', title: 'Attitude Check', titleZH: '學習態度', 
+                template: '{His} {adj} attitude is reflected in the high quality of {his} school work.', 
+                templateZH: '{His}{adj}的態度反映在{his}高質素的課業中。',
+                pools: { adj: ['sincere (真誠的)','positive (積極的)','serious (嚴肅的)'] }
+            },
+            { 
+                id: 'cl3', title: 'Need Improvement', titleZH: '需要改善', 
+                template: 'If {he} can show more {noun} in {subject}, better results are expected.', 
+                templateZH: '若{he}能在{subject}表現出更多{noun}，預期會有更好的成績。',
+                pools: { noun: ['effort (努力)','focus (專注)','determination (決心)'], subject: ['weak subjects (弱勢學科)','English (英語)','Mathematics (數學)'] }
+            },
+            { 
+                id: 'cl4', title: 'Social Advice', titleZH: '社交建議', 
+                template: 'Greater success is expected if {he} pays more {noun}.', 
+                templateZH: '如果{he}能付出更多{noun}，預期會取得更大的成功。',
+                pools: { noun: ['attention to details (對細節的關注)','patience (耐性)'] }
+            },
+            { 
+                id: 'cl5', title: 'Specific Advice', titleZH: '具體建議', 
+                template: '{He} needs greater {noun} to achieve a higher academic standard.', 
+                templateZH: '{He}需要更大的{noun}以達到更高的學術水平。',
+                pools: { noun: ['motivation (動力)','self-discipline (自律)','concentration (專注力)'] }
+            },
+            { 
+                id: 'cl6', title: 'Encouraging', titleZH: '鼓勵說話', 
+                template: 'With more {noun}, {he} will be able to perform even better.', 
+                templateZH: '若能增加更多{noun}，{he}的表現將能更進一步。',
+                pools: { noun: ['confidence (自信)','initiative (主動性)'] }
+            }
         ];
 
         // --- STATE ---
@@ -330,6 +421,9 @@
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             
+            // Update button label
+            document.getElementById('langBtn').textContent = currentLang === 'en' ? "中 / En" : "En / 中";
+            
             // Update UI Strings
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -342,15 +436,15 @@
             document.getElementById('studentName').placeholder = currentLang === 'en' ? "e.g. Chan Tai Man" : "例如: 陳大文";
 
             // Re-render components that contain dynamic text
-            switchTab(state.activeTab); // Re-render Tab content
-            renderCustomization(); // Re-render word chips
+            switchTab(state.activeTab); 
+            renderCustomization();
+            updatePreview();
         }
 
         // --- TAB LOGIC ---
         function switchTab(tabId) {
             state.activeTab = tabId;
             
-            // UI Update Tabs
             document.querySelectorAll('.sentence-tab').forEach(t => t.classList.remove('active', 'bg-blue-600', 'text-white'));
             document.querySelectorAll('.sentence-tab').forEach(t => { 
                 if(!t.classList.contains('active')) t.classList.add('bg-slate-50', 'text-slate-600');
@@ -360,17 +454,14 @@
             activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
             activeBtn.classList.remove('bg-slate-50', 'text-slate-600');
 
-            // Render Options for this Tab
             renderOptions(tabId);
-            
-            // Sync Checkbox
             document.getElementById('segmentEnabled').checked = state[`${tabId}Enabled`];
         }
 
         function toggleCurrentSegment() {
             const enabled = document.getElementById('segmentEnabled').checked;
             state[`${state.activeTab}Enabled`] = enabled;
-            renderOptions(state.activeTab); // Re-render to update opacity
+            renderOptions(state.activeTab); 
             renderCustomization();
             updatePreview();
         }
@@ -380,13 +471,11 @@
             const container = document.getElementById('optionsContainer');
             container.innerHTML = '';
             
-            // Determine data source
             let data = [];
             if(segment === 's1') data = openings;
             if(segment === 's2') data = bodies;
             if(segment === 's3') data = closings;
             
-            // Check if disabled
             const isEnabled = state[`${segment}Enabled`];
             if (!isEnabled) {
                 container.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400 italic">${i18n[currentLang].disabledMsg}</div>`;
@@ -399,13 +488,18 @@
                 card.className = `option-card bg-white rounded-xl p-5 shadow-sm ${isSelected ? 'active border-blue-600 bg-blue-50' : 'border-slate-200'}`;
                 card.onclick = () => selectOption(segment, opt.id, true);
                 
-                // --- UPDATE: Bigger Titles & Bilingual ---
+                // Show title based on language
+                const titleText = currentLang === 'en' ? opt.title : opt.titleZH;
+                // Show subtitle in other language
+                const subText = currentLang === 'en' ? opt.titleZH : opt.title;
+                const templateToShow = currentLang === 'en' ? opt.template : opt.templateZH;
+
                 card.innerHTML = `
                     <div class="mb-2">
-                        <h3 class="font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'} text-lg leading-tight">${opt.title}</h3>
-                        <p class="option-title-zh text-sm mt-0.5">${opt.titleZH}</p>
+                        <h3 class="font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'} text-lg leading-tight">${titleText}</h3>
+                        <p class="text-sm ${isSelected ? 'text-blue-500' : 'text-slate-400'} mt-0.5">${subText}</p>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-2 mt-auto">${opt.template.replace(/\{.*?\}/g, '___')}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-2 mt-auto">${templateToShow.replace(/\{.*?\}/g, '___')}</p>
                 `;
                 container.appendChild(card);
             });
@@ -414,12 +508,10 @@
         function selectOption(segment, id, shouldRender = false) {
             state[segment] = id;
             
-            // Select defaults for this template
             const templateData = getData(segment, id);
             Object.keys(templateData.pools).forEach(key => {
-                const poolKey = `${segment}_${key}`; // Namespace: s1_adj1
+                const poolKey = `${segment}_${key}`; 
                 if (!state.selections[poolKey]) {
-                    // special handling for roles
                     if (key === 'role') {
                         state.selections[poolKey] = getRoleOptions()[0].split(' (')[0];
                     } else {
@@ -457,14 +549,14 @@
                     const section = document.createElement('div');
                     section.className = "border-l-4 border-slate-200 pl-4 py-1";
                     
-                    // Label Translation Logic for Headers in customization
-                    const sentenceLabels = currentLang === 'en' 
-                        ? [`Sentence 1: ${data.title}`, `Sentence 2: ${data.title}`, `Sentence 3: ${data.title}`]
-                        : [`第一句: ${data.titleZH}`, `第二句: ${data.titleZH}`, `第三句: ${data.titleZH}`];
+                    const sentenceTitle = currentLang === 'en' ? data.title : data.titleZH;
+                    const labels = currentLang === 'en' 
+                        ? [`Sentence 1: ${sentenceTitle}`, `Sentence 2: ${sentenceTitle}`, `Sentence 3: ${sentenceTitle}`]
+                        : [`第一句: ${sentenceTitle}`, `第二句: ${sentenceTitle}`, `第三句: ${sentenceTitle}`];
                     
                     const title = document.createElement('h4');
                     title.className = "text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider";
-                    title.textContent = sentenceLabels[index];
+                    title.textContent = labels[index];
                     section.appendChild(title);
 
                     keys.forEach(key => {
@@ -473,10 +565,10 @@
                         
                         const label = document.createElement('p');
                         label.className = "text-xs font-semibold text-slate-500 mb-2";
-                        // Simple key mapping
+                        
                         const keyMap = { adj: "Adjective", adv: "Adverb", noun: "Noun", verb: "Verb", phrase: "Phrase", role: "Role", subject: "Subject" };
                         const keyMapZH = { adj: "形容詞", adv: "副詞", noun: "名詞", verb: "動詞", phrase: "短語", role: "職位", subject: "科目" };
-                        // Handle adj1, adj2 etc
+                        
                         const cleanKey = key.replace(/[0-9]/g, '');
                         label.textContent = currentLang === 'en' 
                             ? `Choose ${keyMap[cleanKey] || key}:` 
@@ -489,10 +581,12 @@
                         if (key === 'role') pool = getRoleOptions();
 
                         pool.forEach(item => {
+                            // item format: "English (Chinese)"
                             const parts = item.match(/^(.*?) \((.*?)\)$/);
                             const eng = parts ? parts[1] : item;
                             const chi = parts ? parts[2] : '';
                             const poolKey = `${seg}_${key}`;
+                            // We persist ENGLISH selection in state
                             const isSelected = state.selections[poolKey] === eng;
 
                             const btn = document.createElement('button');
@@ -503,8 +597,14 @@
                                 updatePreview();
                             };
                             
-                            // Keep Chinese meaning even in English mode as requested
-                            btn.innerHTML = `<span class="font-medium">${eng}</span>${chi ? ` <span class="text-[10px] opacity-75"> ${chi}</span>` : ''}`;
+                            // If English mode: Show "English (Chinese)"
+                            // If Chinese mode: Show "Chinese (English)" for better usability
+                            if (currentLang === 'en') {
+                                btn.innerHTML = `<span class="font-medium">${eng}</span>${chi ? ` <span class="text-[10px] opacity-75"> ${chi}</span>` : ''}`;
+                            } else {
+                                btn.innerHTML = `<span class="font-medium">${chi || eng}</span> <span class="text-[10px] opacity-75"> ${eng}</span>`;
+                            }
+                            
                             chips.appendChild(btn);
                         });
                         
@@ -548,43 +648,83 @@
 
         // --- PREVIEW ---
         function updatePreview() {
-            const name = document.getElementById('studentName').value || "[Name]";
+            const name = document.getElementById('studentName').value || (currentLang === 'en' ? "[Name]" : "[姓名]");
             const gender = document.querySelector('input[name="gender"]:checked').value;
-            const p = gender === 'M' ? {sub:'He', obj:'him', poss:'his'} : {sub:'She', obj:'her', poss:'her'};
+            
+            // Define Pronouns for both languages
+            const p = currentLang === 'en' 
+                ? (gender === 'M' ? {sub:'He', obj:'him', poss:'his'} : {sub:'She', obj:'her', poss:'her'})
+                : (gender === 'M' ? {sub:'他', obj:'他', poss:'他的'} : {sub:'她', obj:'她', poss:'她的'});
 
             let fullText = "";
 
             ['s1', 's2', 's3'].forEach(seg => {
                 if (state[`${seg}Enabled`]) {
                     const data = getData(seg, state[seg]);
-                    let text = data.template;
+                    // Choose Template based on Language
+                    let text = currentLang === 'en' ? data.template : data.templateZH;
                     
                     // Replace Words
                     Object.keys(data.pools).forEach(key => {
-                        const val = state.selections[`${seg}_${key}`] || '___';
-                        text = text.replace(new RegExp(`{${key}}`, 'g'), `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded">${val}</span>`);
+                        const engVal = state.selections[`${seg}_${key}`] || '___';
+                        
+                        let displayVal = engVal;
+                        // If Chinese mode, find the Chinese equivalent from the pool
+                        if (currentLang === 'zh') {
+                            let pool = data.pools[key];
+                            if (key === 'role') pool = getRoleOptions();
+                            
+                            // Find the item string that starts with the English value
+                            // e.g. "capable (有能力的)"
+                            const item = pool.find(i => i.startsWith(engVal + ' ')); 
+                            if (item) {
+                                const parts = item.match(/^(.*?) \((.*?)\)$/);
+                                if (parts && parts[2]) displayVal = parts[2]; // Use Chinese part
+                            }
+                        }
+
+                        text = text.replace(new RegExp(`{${key}}`, 'g'), `<span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded">${displayVal}</span>`);
                     });
 
-                    fullText += text + " ";
+                    fullText += text + (currentLang === 'en' ? " " : ""); // Add space only for English
                 }
             });
 
-            // Replace Grammar
-            let text = fullText.trim();
-            text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${toTitleCase(name)}</span>`);
-            text = text.replace(/{He}/g, p.sub);
-            text = text.replace(/{he}/g, p.sub.toLowerCase());
-            text = text.replace(/{His}/g, p.poss.charAt(0).toUpperCase() + p.poss.slice(1));
-            text = text.replace(/{his}/g, p.poss);
-            text = text.replace(/{Him}/g, p.obj.charAt(0).toUpperCase() + p.obj.slice(1));
-            text = text.replace(/{him}/g, p.obj);
+            // Replace Grammar / Pronouns
+            // English Logic
+            if (currentLang === 'en') {
+                text = fullText.trim();
+                text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${toTitleCase(name)}</span>`);
+                text = text.replace(/{He}/g, p.sub);
+                text = text.replace(/{he}/g, p.sub.toLowerCase());
+                text = text.replace(/{His}/g, p.poss.charAt(0).toUpperCase() + p.poss.slice(1));
+                text = text.replace(/{his}/g, p.poss);
+                text = text.replace(/{Him}/g, p.obj.charAt(0).toUpperCase() + p.obj.slice(1));
+                text = text.replace(/{him}/g, p.obj);
+            } 
+            // Chinese Logic
+            else {
+                text = fullText;
+                text = text.replace(/{Name}/g, `<span class="font-bold text-slate-900">${name}</span>`);
+                // Chinese pronouns are simpler (no capitalization logic needed usually)
+                text = text.replace(/{He}/g, p.sub);
+                text = text.replace(/{he}/g, p.sub);
+                text = text.replace(/{His}/g, p.poss);
+                text = text.replace(/{his}/g, p.poss);
+                text = text.replace(/{Him}/g, p.obj);
+                text = text.replace(/{him}/g, p.obj);
+            }
 
             const box = document.getElementById('previewText');
-            box.innerHTML = text || '<span class="text-slate-400 italic">Select sentences above...</span>';
+            box.innerHTML = text || '<span class="text-slate-400 italic">...</span>';
 
             // Word Count
-            const count = box.innerText.trim().split(/\s+/).filter(w => w).length;
-            document.getElementById('wordCount').innerText = `${count} words`;
+            const cleanText = box.innerText;
+            const count = currentLang === 'en' 
+                ? cleanText.trim().split(/\s+/).filter(w => w).length 
+                : cleanText.length; // Character count for Chinese
+            
+            document.getElementById('wordCount').innerText = `${count} ${currentLang === 'en' ? 'words' : 'chars'}`;
         }
 
         function copyToClipboard() {
