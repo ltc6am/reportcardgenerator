@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HK Report Card Generator v10</title>
+    <title>HK Report Card Generator v11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     <!-- Favicon -->
@@ -18,28 +18,45 @@
         
         /* Glassmorphism */
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             border-radius: 1rem;
         }
 
-        /* Option Cards in Step 2 */
+        /* Tabs in Step 2 */
+        .sentence-tab {
+            transition: all 0.2s ease;
+            text-align: left;
+            border: 2px solid transparent;
+        }
+        .sentence-tab:hover {
+            background-color: #f1f5f9;
+        }
+        .sentence-tab.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .sentence-tab.active .sub-text { color: #bfdbfe; }
+        .sentence-tab .sub-text { color: #94a3b8; transition: color 0.2s; }
+
+        /* Option Cards */
         .option-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 2px solid #e2e8f0;
         }
         .option-card:hover {
             transform: translateY(-2px);
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
+            border-color: #94a3b8;
         }
         .option-card.active {
-            border-color: #3b82f6;
+            border-color: #2563eb;
             background-color: #eff6ff;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 2px #2563eb;
         }
 
         /* Word Chips */
@@ -75,10 +92,6 @@
         }
         .reveal-content.open { grid-template-rows: 1fr; opacity: 1; margin-bottom: 1.5rem; }
         .inner-content { overflow: hidden; }
-
-        /* Custom Scrollbar for horizontal lists */
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-64 text-slate-800">
@@ -90,7 +103,7 @@
                 <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v10</span></h1>
+                <h1 class="text-xl font-bold tracking-tight">Report Card Gen <span class="text-blue-600">v11</span></h1>
             </div>
             <button onclick="toggleInstructions()" class="text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -104,19 +117,19 @@
         <!-- INSTRUCTIONS -->
         <div id="instructions" class="reveal-content glass-card border-l-4 border-l-blue-500">
             <div class="inner-content p-6">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">How to Mix & Match</h2>
+                <h2 class="text-lg font-bold text-slate-800 mb-4">How to Use</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-600">
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">1</div>
-                        <div><p class="font-bold text-slate-800">Student Info</p><p>Name & Gender (auto-corrects grammar).</p></div>
+                        <div><p class="font-bold text-slate-800">Student Info</p><p>Enter name and gender.</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">2</div>
-                        <div><p class="font-bold text-slate-800">Build Sentence</p><p>Select an Opening, Body, and Closing independently. Uncheck any you don't need.</p></div>
+                        <div><p class="font-bold text-slate-800">Select Sentences</p><p>Click "Sentence 1", "Sentence 2", or "Sentence 3" tabs, then choose a style for that part.</p></div>
                     </div>
                     <div class="flex gap-3">
                         <div class="step-badge shrink-0">3</div>
-                        <div><p class="font-bold text-slate-800">Fill Words</p><p>Click the generated blue chips to customize adjectives and nouns.</p></div>
+                        <div><p class="font-bold text-slate-800">Customize</p><p>Use the generated word chips at the bottom to refine the comment.</p></div>
                     </div>
                 </div>
             </div>
@@ -154,52 +167,39 @@
             </div>
         </section>
 
-        <!-- STEP 2 -->
+        <!-- STEP 2: TABBED SENTENCE BUILDER -->
         <section class="glass-card p-6 md:p-8">
-            <h2 class="text-lg font-bold text-slate-700 mb-2 flex items-center gap-3">
+            <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-3">
                 <span class="step-badge">2</span> Build Comment Structure
             </h2>
-            <p class="text-sm text-slate-500 mb-6 pl-10">Select a style for each part of the report card. Uncheck to skip.</p>
             
-            <div class="space-y-8">
-                <!-- Sentence 1 Picker -->
-                <div class="relative">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="enableS1" checked onchange="toggleSegment('s1')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
-                            <label for="enableS1" class="font-bold text-slate-700">Sentence 1: Opening (Personality)</label>
-                        </div>
-                        <span class="text-xs font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">Select Style 👇</span>
-                    </div>
-                    <div id="s1-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
-                        <!-- JS Injected -->
-                    </div>
+            <!-- TABS -->
+            <div class="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+                <button onclick="switchTab('s1')" id="tab-s1" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start active">
+                    <span class="font-bold text-sm md:text-base">Sentence 1</span>
+                    <span class="sub-text text-xs mt-1">Opening (Personality)</span>
+                </button>
+                <button onclick="switchTab('s2')" id="tab-s2" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start bg-slate-50 text-slate-600">
+                    <span class="font-bold text-sm md:text-base">Sentence 2</span>
+                    <span class="sub-text text-xs mt-1">Body (Performance)</span>
+                </button>
+                <button onclick="switchTab('s3')" id="tab-s3" class="sentence-tab p-4 rounded-xl flex flex-col items-center md:items-start bg-slate-50 text-slate-600">
+                    <span class="font-bold text-sm md:text-base">Sentence 3</span>
+                    <span class="sub-text text-xs mt-1">Closing (Advice)</span>
+                </button>
+            </div>
+
+            <!-- CONTENT AREA (Dynamic) -->
+            <div class="bg-slate-50 rounded-xl p-4 md:p-6 border border-slate-200">
+                
+                <!-- Toggle Checkbox -->
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                    <input type="checkbox" id="segmentEnabled" checked onchange="toggleCurrentSegment()" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer">
+                    <label for="segmentEnabled" class="font-bold text-slate-700 cursor-pointer select-none">Include this sentence in report card</label>
                 </div>
 
-                <!-- Sentence 2 Picker -->
-                <div class="relative pt-4 border-t border-slate-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="enableS2" checked onchange="toggleSegment('s2')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
-                            <label for="enableS2" class="font-bold text-slate-700">Sentence 2: Body (Performance)</label>
-                        </div>
-                    </div>
-                    <div id="s2-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
-                        <!-- JS Injected -->
-                    </div>
-                </div>
-
-                <!-- Sentence 3 Picker -->
-                <div class="relative pt-4 border-t border-slate-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="enableS3" checked onchange="toggleSegment('s3')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
-                            <label for="enableS3" class="font-bold text-slate-700">Sentence 3: Closing (Advice)</label>
-                        </div>
-                    </div>
-                    <div id="s3-options" class="flex gap-3 overflow-x-auto pb-4 hide-scroll snap-x">
-                        <!-- JS Injected -->
-                    </div>
+                <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- JS will inject cards here -->
                 </div>
             </div>
         </section>
@@ -246,7 +246,7 @@
     </div>
 
     <script>
-        // --- CONFIG DATA ---
+        // --- DATA CONFIGURATION ---
         
         const openings = [
             { id: 'op1', title: 'High Achiever', template: '{Name} is a {adj1} student with {adj2} potential.', pools: { adj1: ['capable (有能力的)','intelligent (聰穎的)','earnest (認真的)','disciplined (自律的)'], adj2: ['excellent (優秀的)','promising (有前途的)','outstanding (傑出的)','tremendous (極大的)'] }},
@@ -277,6 +277,7 @@
 
         // --- STATE ---
         let state = {
+            activeTab: 's1',
             s1: 'op1', s1Enabled: true,
             s2: 'bd1', s2Enabled: true,
             s3: 'cl1', s3Enabled: true,
@@ -285,40 +286,76 @@
 
         // --- INIT ---
         function init() {
-            renderOptions('s1', openings);
-            renderOptions('s2', bodies);
-            renderOptions('s3', closings);
-            // Set defaults
-            selectOption('s1', 'op1');
-            selectOption('s2', 'bd3'); // Satisfactory results as default body
-            selectOption('s3', 'cl1');
+            // Set defaults and render
+            selectOption('s1', 'op1', false);
+            selectOption('s2', 'bd3', false);
+            selectOption('s3', 'cl1', false);
+            switchTab('s1');
+        }
+
+        // --- TAB LOGIC ---
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            
+            // UI Update Tabs
+            document.querySelectorAll('.sentence-tab').forEach(t => t.classList.remove('active', 'bg-blue-600', 'text-white'));
+            document.querySelectorAll('.sentence-tab').forEach(t => { 
+                if(!t.classList.contains('active')) t.classList.add('bg-slate-50', 'text-slate-600');
+            });
+            
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
+            activeBtn.classList.remove('bg-slate-50', 'text-slate-600');
+
+            // Render Options for this Tab
+            renderOptions(tabId);
+            
+            // Sync Checkbox
+            document.getElementById('segmentEnabled').checked = state[`${tabId}Enabled`];
+        }
+
+        function toggleCurrentSegment() {
+            const enabled = document.getElementById('segmentEnabled').checked;
+            state[`${state.activeTab}Enabled`] = enabled;
+            renderOptions(state.activeTab); // Re-render to update opacity
+            renderCustomization();
+            updatePreview();
         }
 
         // --- UI RENDERING ---
-        function renderOptions(segment, data) {
-            const container = document.getElementById(`${segment}-options`);
+        function renderOptions(segment) {
+            const container = document.getElementById('optionsContainer');
             container.innerHTML = '';
             
+            // Determine data source
+            let data = [];
+            if(segment === 's1') data = openings;
+            if(segment === 's2') data = bodies;
+            if(segment === 's3') data = closings;
+            
+            // Check if disabled
+            const isEnabled = state[`${segment}Enabled`];
+            if (!isEnabled) {
+                container.innerHTML = `<div class="col-span-3 text-center py-10 text-slate-400 italic">This sentence is currently disabled. Check the box above to enable options.</div>`;
+                return;
+            }
+
             data.forEach(opt => {
+                const isSelected = state[segment] === opt.id;
                 const card = document.createElement('div');
-                card.className = `option-card flex-shrink-0 w-48 bg-white rounded-xl p-4 border border-slate-200 snap-start`;
-                card.id = `card-${segment}-${opt.id}`;
-                card.onclick = () => selectOption(segment, opt.id);
+                card.className = `option-card bg-white rounded-xl p-5 border shadow-sm ${isSelected ? 'active border-blue-600 bg-blue-50' : 'border-slate-200'}`;
+                card.onclick = () => selectOption(segment, opt.id, true);
                 card.innerHTML = `
-                    <h3 class="font-bold text-slate-800 text-sm mb-1">${opt.title}</h3>
-                    <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${opt.template.replace(/\{.*?\}/g, '___')}</p>
+                    <h3 class="font-bold ${isSelected ? 'text-blue-700' : 'text-slate-800'} text-sm mb-2">${opt.title}</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">${opt.template.replace(/\{.*?\}/g, '___')}</p>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function selectOption(segment, id) {
+        function selectOption(segment, id, shouldRender = false) {
             state[segment] = id;
             
-            // Visual Active State
-            document.querySelectorAll(`#${segment}-options .option-card`).forEach(c => c.classList.remove('active'));
-            document.getElementById(`card-${segment}-${id}`).classList.add('active');
-
             // Select defaults for this template
             const templateData = getData(segment, id);
             Object.keys(templateData.pools).forEach(key => {
@@ -333,20 +370,11 @@
                 }
             });
 
-            renderCustomization();
-            updatePreview();
-        }
-
-        function toggleSegment(segment) {
-            state[`${segment}Enabled`] = document.getElementById(`enable${segment.toUpperCase()}`).checked;
-            const optionsDiv = document.getElementById(`${segment}-options`);
-            if (state[`${segment}Enabled`]) {
-                optionsDiv.classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                optionsDiv.classList.add('opacity-50', 'pointer-events-none');
+            if (shouldRender) {
+                renderOptions(segment);
+                renderCustomization();
+                updatePreview();
             }
-            renderCustomization();
-            updatePreview();
         }
 
         function getData(segment, id) {
